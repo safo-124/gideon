@@ -1,7 +1,6 @@
 import { createTenant, deleteTenant, updateTenant } from "../../actions";
 import {
   AddPanel,
-  BlockSelect,
   DeleteForm,
   EmptyState,
   FieldLabel,
@@ -9,7 +8,6 @@ import {
   PageHeader,
   Pill,
   ReturnTo,
-  RowList,
   StatCard,
   buttonClass,
   firstParam,
@@ -17,11 +15,12 @@ import {
   subtleButtonClass,
   type AdminSearchParams,
 } from "../../_components/ui";
-import { getBlocks, getTenants } from "../../_lib/data";
+import { getBlocksWithApartments, getTenants } from "../../_lib/data";
 
 export const metadata = { title: "Tenants - Admin" };
 
 const RETURN_TO = "/admin/tenants";
+
 const dateFormatter = new Intl.DateTimeFormat("en-FI", {
   month: "short",
   day: "numeric",
@@ -38,11 +37,13 @@ function initials(name: string) {
     .toUpperCase();
 }
 
+type BlocksWithApartments = Awaited<ReturnType<typeof getBlocksWithApartments>>;
+
 function UnitSelect({
   blocks,
   defaultValue,
 }: {
-  blocks: Awaited<ReturnType<typeof getBlocks>>;
+  blocks: BlocksWithApartments;
   defaultValue?: number;
 }) {
   return (
@@ -52,9 +53,9 @@ function UnitSelect({
       name="apartmentId"
       required
     >
-      <option value="">Apartment</option>
+      <option value="">Select apartment</option>
       {blocks.map((block) =>
-        block.apartments?.map((apt) => (
+        block.apartments.map((apt) => (
           <option key={apt.id} value={apt.id}>
             {block.name} / Apt {apt.number}
           </option>
@@ -70,16 +71,7 @@ export default async function TenantsPage({
   searchParams: AdminSearchParams;
 }) {
   const params = await searchParams;
-  const [tenants, blocks] = await Promise.all([
-    getTenants(),
-    // fetch blocks with apartments for the unit selector
-    import("@/lib/prisma").then(({ prisma }) =>
-      prisma.block.findMany({
-        orderBy: { name: "asc" },
-        include: { apartments: { orderBy: { number: "asc" }, select: { id: true, number: true } } },
-      }),
-    ),
-  ]);
+  const [tenants, blocks] = await Promise.all([getTenants(), getBlocksWithApartments()]);
 
   const activeUnits = new Set(tenants.map((t) => t.apartmentId)).size;
   const totalRequests = tenants.reduce((sum, t) => sum + t._count.requests, 0);
@@ -105,7 +97,7 @@ export default async function TenantsPage({
         <p className="mb-3 text-xs font-medium text-zinc-500">Add tenant</p>
         <form
           action={createTenant}
-          className="grid gap-3 md:grid-cols-[1.2fr_1.4fr_1fr_1fr_1fr_auto] md:items-end"
+          className="grid gap-3 md:grid-cols-[1.2fr_1.4fr_1fr_1.2fr_auto] md:items-end"
         >
           <ReturnTo value={RETURN_TO} />
           <label>
@@ -118,14 +110,21 @@ export default async function TenantsPage({
           </label>
           <label>
             <FieldLabel>Password</FieldLabel>
-            <input className={inputClass} minLength={8} name="password" placeholder="Min 8 chars" required type="password" />
+            <input
+              className={inputClass}
+              minLength={8}
+              name="password"
+              placeholder="Min 8 chars"
+              required
+              type="password"
+            />
           </label>
           <label>
             <FieldLabel>Apartment</FieldLabel>
             <UnitSelect blocks={blocks} />
           </label>
           <button className={buttonClass} disabled={blocks.length === 0} type="submit">
-            Add tenant
+            Add
           </button>
         </form>
       </AddPanel>
@@ -148,82 +147,72 @@ export default async function TenantsPage({
                 key={tenant.id}
               >
                 {/* Profile header */}
-                <div className="flex items-start gap-4 border-b border-zinc-100 p-4 dark:border-zinc-800">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-50 text-base font-semibold text-teal-800 dark:bg-teal-950/40 dark:text-teal-200">
+                <div className="flex items-start gap-4 p-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-sm font-semibold text-teal-800 dark:bg-teal-950/40 dark:text-teal-200">
                     {initials(tenant.fullName)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-semibold">{tenant.fullName}</div>
-                    <a
-                      className="text-xs text-teal-700 hover:underline dark:text-teal-400"
-                      href={`mailto:${tenant.email}`}
-                    >
-                      {tenant.email}
-                    </a>
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="text-sm font-semibold">{tenant.fullName}</span>
                       <Pill tone={occupancyTone}>
                         {tenant.apartment.block.name} / Apt {tenant.apartment.number}
                       </Pill>
-                      <span className="text-xs text-zinc-400">
-                        {tenant._count.requests} request{tenant._count.requests === 1 ? "" : "s"}
-                      </span>
-                      <span className="text-xs text-zinc-400">
-                        Joined {dateFormatter.format(tenant.createdAt)}
-                      </span>
+                    </div>
+                    <div className="mt-0.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-zinc-500">
+                      <a className="text-teal-700 hover:underline dark:text-teal-400" href={`mailto:${tenant.email}`}>
+                        {tenant.email}
+                      </a>
+                      <span>{tenant._count.requests} request{tenant._count.requests === 1 ? "" : "s"}</span>
+                      <span>Joined {dateFormatter.format(tenant.createdAt)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Edit form */}
-                <div className="p-4">
-                  <form
-                    action={updateTenant}
-                    className="grid gap-3 md:grid-cols-[1.2fr_1.4fr_1fr_1fr_auto_auto] md:items-end"
-                  >
-                    <ReturnTo value={RETURN_TO} />
-                    <input name="id" type="hidden" value={tenant.id} />
-                    <label>
-                      <FieldLabel>Full name</FieldLabel>
-                      <input className={inputClass} defaultValue={tenant.fullName} name="fullName" required />
-                    </label>
-                    <label>
-                      <FieldLabel>Email</FieldLabel>
-                      <input
-                        className={inputClass}
-                        defaultValue={tenant.email}
-                        name="email"
-                        required
-                        type="email"
-                      />
-                    </label>
-                    <label>
-                      <FieldLabel>New password</FieldLabel>
-                      <input
-                        className={inputClass}
-                        minLength={8}
-                        name="password"
-                        placeholder="Leave blank to keep"
-                        type="password"
-                      />
-                    </label>
-                    <label>
-                      <FieldLabel>Apartment</FieldLabel>
-                      <UnitSelect blocks={blocks} defaultValue={tenant.apartmentId} />
-                    </label>
-                    <button className={subtleButtonClass} type="submit">
-                      Save
-                    </button>
-                  </form>
-                </div>
-
-                <div className="flex justify-end border-t border-zinc-100 px-4 py-3 dark:border-zinc-800">
+                <form
+                  action={updateTenant}
+                  className="grid gap-3 border-t border-zinc-100 p-4 dark:border-zinc-800 md:grid-cols-[1.2fr_1.4fr_1fr_1.2fr_auto_auto] md:items-end"
+                >
+                  <ReturnTo value={RETURN_TO} />
+                  <input name="id" type="hidden" value={tenant.id} />
+                  <label>
+                    <FieldLabel>Full name</FieldLabel>
+                    <input className={inputClass} defaultValue={tenant.fullName} name="fullName" required />
+                  </label>
+                  <label>
+                    <FieldLabel>Email</FieldLabel>
+                    <input
+                      className={inputClass}
+                      defaultValue={tenant.email}
+                      name="email"
+                      required
+                      type="email"
+                    />
+                  </label>
+                  <label>
+                    <FieldLabel>New password</FieldLabel>
+                    <input
+                      className={inputClass}
+                      minLength={8}
+                      name="password"
+                      placeholder="Leave blank to keep"
+                      type="password"
+                    />
+                  </label>
+                  <label>
+                    <FieldLabel>Apartment</FieldLabel>
+                    <UnitSelect blocks={blocks} defaultValue={tenant.apartmentId} />
+                  </label>
+                  <button className={subtleButtonClass} type="submit">
+                    Save
+                  </button>
                   <DeleteForm
                     action={deleteTenant}
                     disabled={tenant._count.requests > 0}
                     id={tenant.id}
                     returnTo={RETURN_TO}
                   />
-                </div>
+                </form>
               </div>
             );
           })}

@@ -110,6 +110,15 @@ export async function getRequestStats() {
   return { total, active, overdue, disputed };
 }
 
+export async function getBlocksWithApartments() {
+  return prisma.block.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      apartments: { orderBy: { number: "asc" }, select: { id: true, number: true } },
+    },
+  });
+}
+
 export async function getOverviewData() {
   const [blocks, units, tenants, cabinets, keys] = await Promise.all([
     getBlocks(),

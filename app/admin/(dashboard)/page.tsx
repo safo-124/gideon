@@ -8,7 +8,7 @@ import {
   type AdminSearchParams,
   firstParam,
 } from "../_components/ui";
-import { getOverviewData, unitTypeLabel } from "../_lib/data";
+import { getOverviewData, getRequestStats, unitTypeLabel } from "../_lib/data";
 
 export const metadata = { title: "Admin - Key Recovery" };
 
@@ -48,7 +48,10 @@ export default async function AdminOverviewPage({
   const params = await searchParams;
   const notice = firstParam(params.notice);
   const error = firstParam(params.error);
-  const { blocks, units, tenants, cabinets, keys } = await getOverviewData();
+  const [{ blocks, units, tenants, cabinets, keys }, reqStats] = await Promise.all([
+    getOverviewData(),
+    getRequestStats(),
+  ]);
 
   const totalCapacity = units.reduce((sum, unit) => sum + unit.capacity, 0);
   const occupiedBeds = units.reduce((sum, unit) => sum + unit._count.tenants, 0);
@@ -132,25 +135,52 @@ export default async function AdminOverviewPage({
           )}
         </section>
 
-        <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-          <h2 className="text-base font-semibold">Key coverage</h2>
-          <div className="mt-4 grid gap-3">
-            <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
-              <span>Keys</span>
-              <span className="font-medium tabular-nums">{keys.length}</span>
+        <div className="grid gap-4">
+          <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+            <h2 className="text-base font-semibold">Key coverage</h2>
+            <div className="mt-4 grid gap-3">
+              <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
+                <span>Keys</span>
+                <span className="font-medium tabular-nums">{keys.length}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
+                <span>Unit assignments</span>
+                <span className="font-medium tabular-nums">{assignedUnitLinks}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
+                <span>Cabinets in use</span>
+                <span className="font-medium tabular-nums">
+                  {cabinetsInUse}/{cabinets.length}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
-              <span>Unit assignments</span>
-              <span className="font-medium tabular-nums">{assignedUnitLinks}</span>
+          </section>
+
+          <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold">Requests</h2>
+              <Link
+                className="text-xs font-medium text-teal-700 hover:underline dark:text-teal-400"
+                href="/admin/requests"
+              >
+                View all →
+              </Link>
             </div>
-            <div className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
-              <span>Cabinets in use</span>
-              <span className="font-medium tabular-nums">
-                {cabinetsInUse}/{cabinets.length}
-              </span>
+            <div className="grid gap-3">
+              {[
+                { label: "Active", value: reqStats.active, tone: "teal" as const },
+                { label: "Overdue", value: reqStats.overdue, tone: reqStats.overdue > 0 ? "red" as const : "zinc" as const },
+                { label: "Disputed", value: reqStats.disputed, tone: reqStats.disputed > 0 ? "red" as const : "zinc" as const },
+                { label: "Total", value: reqStats.total, tone: "zinc" as const },
+              ].map(({ label, value, tone }) => (
+                <div key={label} className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-900">
+                  <span className={tone === "red" ? "text-red-600 dark:text-red-400" : ""}>{label}</span>
+                  <span className={`font-medium tabular-nums ${tone === "red" ? "text-red-600 dark:text-red-400" : ""}`}>{value}</span>
+                </div>
+              ))}
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </>
   );
