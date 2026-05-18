@@ -58,6 +58,7 @@ export const ModelName = {
   Cabinet: 'Cabinet',
   Key: 'Key',
   KeyApartment: 'KeyApartment',
+  Setting: 'Setting',
   KeyRequest: 'KeyRequest'
 } as const
 
@@ -147,6 +148,15 @@ export const KeyApartmentScalarFieldEnum = {
 } as const
 
 export type KeyApartmentScalarFieldEnum = (typeof KeyApartmentScalarFieldEnum)[keyof typeof KeyApartmentScalarFieldEnum]
+
+
+export const SettingScalarFieldEnum = {
+  key: 'key',
+  value: 'value',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SettingScalarFieldEnum = (typeof SettingScalarFieldEnum)[keyof typeof SettingScalarFieldEnum]
 
 
 export const KeyRequestScalarFieldEnum = {

@@ -100,6 +100,12 @@ enum RequestStatus {
   DISPUTED            // owner reported as unauthorized
 }
 
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model KeyRequest {
   id              Int           @id @default(autoincrement())
   requester       Tenant        @relation(fields: [requesterId], references: [id])

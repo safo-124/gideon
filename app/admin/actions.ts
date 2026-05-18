@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { randomInt } from "node:crypto";
+import bcrypt from "bcryptjs";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { SETTING_KEYS } from "@/lib/settings";
 
 class ActionError extends Error {}
 
@@ -16,6 +18,8 @@ const ADMIN_ROUTES = new Set([
   "/admin/tenants",
   "/admin/cabinets",
   "/admin/keys",
+  "/admin/requests",
+  "/admin/settings",
 ]);
 const KEY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const APARTMENT_UNIT_TYPES = [
@@ -300,4 +304,116 @@ export async function deleteKey(formData: FormData) {
   await runAdminAction(formData, "/admin/keys", "Key deleted.", async () => {
     await prisma.key.delete({ where: { id: idField(formData) } });
   });
+}
+
+// ── Tenants ──────────────────────────────────────────────────────────────────
+
+export async function createTenant(formData: FormData) {
+  await runAdminAction(formData, "/admin/tenants", "Tenant created.", async () => {
+    const password = requiredField(formData, "password", "Password");
+    if (password.length < 8) throw new ActionError("Password must be at least 8 characters.");
+    await prisma.tenant.create({
+      data: {
+        fullName: requiredField(formData, "fullName", "Full name"),
+        email: requiredField(formData, "email", "Email"),
+        passwordHash: await bcrypt.hash(password, 10),
+        apartmentId: idField(formData, "apartmentId"),
+      },
+    });
+  });
+}
+
+export async function updateTenant(formData: FormData) {
+  await runAdminAction(formData, "/admin/tenants", "Tenant updated.", async () => {
+    const newPassword = field(formData, "password");
+    const data: Record<string, unknown> = {
+      fullName: requiredField(formData, "fullName", "Full name"),
+      email: requiredField(formData, "email", "Email"),
+      apartmentId: idField(formData, "apartmentId"),
+    };
+    if (newPassword) {
+      if (newPassword.length < 8) throw new ActionError("Password must be at least 8 characters.");
+      data.passwordHash = await bcrypt.hash(newPassword, 10);
+    }
+    await prisma.tenant.update({ where: { id: idField(formData) }, data });
+  });
+}
+
+export async function deleteTenant(formData: FormData) {
+  await runAdminAction(formData, "/admin/tenants", "Tenant deleted.", async () => {
+    await prisma.tenant.delete({ where: { id: idField(formData) } });
+  });
+}
+
+// ── Key requests ─────────────────────────────────────────────────────────────
+
+export async function adminCancelRequest(formData: FormData) {
+  await runAdminAction(formData, "/admin/requests", "Request cancelled.", async () => {
+    const id = idField(formData);
+    const req = await prisma.keyRequest.findUnique({ where: { id } });
+    if (!req || !["AWAITING_PAYMENT", "PAID", "PENDING_AUTH"].includes(req.status)) {
+      throw new ActionError("This request cannot be cancelled.");
+    }
+    await prisma.keyRequest.update({
+      where: { id },
+      data: { status: "CANCELLED", cancelledAt: new Date() },
+    });
+  });
+}
+
+export async function adminMarkReturned(formData: FormData) {
+  await runAdminAction(formData, "/admin/requests", "Request marked as returned.", async () => {
+    const id = idField(formData);
+    const req = await prisma.keyRequest.findUnique({ where: { id } });
+    if (!req || req.status !== "PICKED_UP") {
+      throw new ActionError("Only picked-up requests can be marked as returned.");
+    }
+    await prisma.keyRequest.update({
+      where: { id },
+      data: { status: "RETURNED", returnedAt: new Date() },
+    });
+  });
+}
+
+export async function adminMarkLost(formData: FormData) {
+  await runAdminAction(formData, "/admin/requests", "Key marked as lost.", async () => {
+    const id = idField(formData);
+    const lostFeeCents = Number(field(formData, "lostFeeCents")) || 10000;
+    const req = await prisma.keyRequest.findUnique({ where: { id } });
+    if (!req || req.status !== "PICKED_UP") {
+      throw new ActionError("Only picked-up requests can be marked as lost.");
+    }
+    await prisma.keyRequest.update({
+      where: { id },
+      data: { status: "RETURNED", returnedAt: new Date(), overdueFeeCents: lostFeeCents },
+    });
+  });
+}
+
+// ── Settings ──────────────────────────────────────────────────────────────────
+
+export async function updateSettings(formData: FormData) {
+  await requireAdmin();
+
+  const updates: { key: string; value: string }[] = [];
+
+  for (const key of SETTING_KEYS) {
+    const raw = field(formData, key);
+    const num = Number(raw);
+    if (!raw || !Number.isFinite(num) || num < 0) {
+      const params = new URLSearchParams({ error: `Invalid value for ${key.replace(/_/g, " ")}.` });
+      redirect(`/admin/settings?${params}`);
+    }
+    updates.push({ key, value: String(Math.round(num)) });
+  }
+
+  await prisma.$transaction(
+    updates.map(({ key, value }) =>
+      prisma.setting.upsert({ where: { key }, create: { key, value }, update: { value } }),
+    ),
+  );
+
+  revalidatePath(ADMIN_PATH);
+  const params = new URLSearchParams({ notice: "Settings saved." });
+  redirect(`/admin/settings?${params}`);
 }

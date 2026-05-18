@@ -9,15 +9,18 @@ type Counts = {
   tenants: number;
   cabinets: number;
   keys: number;
+  requests: number;
 };
 
 const navItems = [
   { href: "/admin", label: "Overview", countKey: null },
+  { href: "/admin/requests", label: "Requests", countKey: "requests" },
+  { href: "/admin/tenants", label: "Tenants", countKey: "tenants" },
   { href: "/admin/blocks", label: "Blocks", countKey: "blocks" },
   { href: "/admin/units", label: "Units", countKey: "units" },
-  { href: "/admin/tenants", label: "Tenants", countKey: "tenants" },
   { href: "/admin/cabinets", label: "Cabinets", countKey: "cabinets" },
   { href: "/admin/keys", label: "Keys", countKey: "keys" },
+  { href: "/admin/settings", label: "Settings", countKey: null },
 ] as const;
 
 export function AdminNav({ counts }: { counts: Counts }) {
@@ -40,7 +43,7 @@ export function AdminNav({ counts }: { counts: Counts }) {
             <span>{item.label}</span>
             {item.countKey && (
               <span className="rounded-full bg-white px-2 py-0.5 text-xs tabular-nums text-zinc-500 dark:bg-zinc-900">
-                {counts[item.countKey]}
+                {counts[item.countKey as keyof Counts]}
               </span>
             )}
           </Link>

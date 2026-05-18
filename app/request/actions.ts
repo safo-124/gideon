@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { requireTenant } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { findAvailableKey, getActiveRequest, getRequest } from "./_lib/data";
+import { getSettings } from "@/lib/settings";
 
 function parseId(formData: FormData): number {
   const v = Number(formData.get("id"));
@@ -18,12 +19,15 @@ export async function createSelfRequest(_formData: FormData) {
   const existing = await getActiveRequest(tenant.id);
   if (existing) redirect("/");
 
+  const { base_fee_cents } = await getSettings();
+
   const request = await prisma.keyRequest.create({
     data: {
       requesterId: tenant.id,
       apartmentId: tenant.apartmentId,
       type: "SELF",
       status: "AWAITING_PAYMENT",
+      amountCents: base_fee_cents,
     },
   });
 
@@ -45,12 +49,15 @@ export async function createForOtherRequest(formData: FormData) {
   const apartment = await prisma.apartment.findUnique({ where: { id: apartmentId } });
   if (!apartment) redirect("/request/for-someone?error=Apartment+not+found.");
 
+  const { base_fee_cents } = await getSettings();
+
   const request = await prisma.keyRequest.create({
     data: {
       requesterId: tenant.id,
       apartmentId,
       type: "FOR_OTHER",
       status: "AWAITING_PAYMENT",
+      amountCents: base_fee_cents,
     },
   });
 
@@ -83,7 +90,9 @@ export async function payRequest(formData: FormData) {
       keyId: key.id,
       ...(request.type === "FOR_OTHER" && {
         disputeToken: randomBytes(24).toString("hex"),
-        disputeWindowEndsAt: new Date(paidAt.getTime() + 30 * 60 * 1000),
+        disputeWindowEndsAt: await getSettings().then(
+          (s) => new Date(paidAt.getTime() + s.dispute_window_minutes * 60 * 1000),
+        ),
       }),
     },
   });
@@ -100,7 +109,8 @@ export async function markPickedUp(formData: FormData) {
   if (!request || request.status !== "PAID") redirect("/");
 
   const pickedAt = new Date();
-  const dueAt = new Date(pickedAt.getTime() + 6 * 60 * 60 * 1000);
+  const { hold_hours } = await getSettings();
+  const dueAt = new Date(pickedAt.getTime() + hold_hours * 60 * 60 * 1000);
 
   await prisma.keyRequest.update({
     where: { id: requestId },

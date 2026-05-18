@@ -53,6 +53,11 @@ export type Key = Prisma.KeyModel
  */
 export type KeyApartment = Prisma.KeyApartmentModel
 /**
+ * Model Setting
+ * 
+ */
+export type Setting = Prisma.SettingModel
+/**
  * Model KeyRequest
  * 
  */

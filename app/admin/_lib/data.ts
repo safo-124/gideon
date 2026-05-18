@@ -11,15 +11,16 @@ export const unitTypeOptions = [
 ] as const;
 
 export async function getAdminCounts() {
-  const [blocks, units, cabinets, keys, tenants] = await Promise.all([
+  const [blocks, units, cabinets, keys, tenants, requests] = await Promise.all([
     prisma.block.count(),
     prisma.apartment.count(),
     prisma.cabinet.count(),
     prisma.key.count(),
     prisma.tenant.count(),
+    prisma.keyRequest.count({ where: { status: { in: ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] } } }),
   ]);
 
-  return { blocks, units, cabinets, keys, tenants };
+  return { blocks, units, cabinets, keys, tenants, requests };
 }
 
 export async function getBlocks() {
@@ -75,6 +76,40 @@ export async function getKeys() {
   });
 }
 
+export async function getRequests(statusFilter?: string) {
+  const activeStatuses = ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] as const;
+
+  const where =
+    statusFilter === "active"
+      ? { status: { in: activeStatuses } }
+      : statusFilter === "overdue"
+        ? { status: "PICKED_UP" as const, dueAt: { lt: new Date() } }
+        : statusFilter === "completed"
+          ? { status: { in: ["RETURNED", "CANCELLED", "DISPUTED"] as const } }
+          : undefined;
+
+  return prisma.keyRequest.findMany({
+    where,
+    include: {
+      requester: { select: { id: true, fullName: true, email: true } },
+      apartment: { include: { block: true } },
+      key: { include: { cabinet: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getRequestStats() {
+  const now = new Date();
+  const [total, active, overdue, disputed] = await Promise.all([
+    prisma.keyRequest.count(),
+    prisma.keyRequest.count({ where: { status: { in: ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] } } }),
+    prisma.keyRequest.count({ where: { status: "PICKED_UP", dueAt: { lt: now } } }),
+    prisma.keyRequest.count({ where: { status: "DISPUTED" } }),
+  ]);
+  return { total, active, overdue, disputed };
+}
+
 export async function getOverviewData() {
   const [blocks, units, tenants, cabinets, keys] = await Promise.all([
     getBlocks(),
@@ -92,6 +127,7 @@ export type UnitRow = Awaited<ReturnType<typeof getUnits>>[number];
 export type TenantRow = Awaited<ReturnType<typeof getTenants>>[number];
 export type CabinetRow = Awaited<ReturnType<typeof getCabinets>>[number];
 export type KeyRow = Awaited<ReturnType<typeof getKeys>>[number];
+export type RequestRow = Awaited<ReturnType<typeof getRequests>>[number];
 
 export function unitTypeLabel(value: string) {
   return unitTypeOptions.find((option) => option.value === value)?.label ?? "Other";
