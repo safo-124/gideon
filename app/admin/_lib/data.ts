@@ -77,24 +77,31 @@ export async function getKeys() {
 }
 
 export async function getRequests(statusFilter?: string) {
-  const activeStatuses = ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] as const;
+  const now = new Date();
 
-  const where =
-    statusFilter === "active"
-      ? { status: { in: activeStatuses } }
-      : statusFilter === "overdue"
-        ? { status: "PICKED_UP" as const, dueAt: { lt: new Date() } }
-        : statusFilter === "completed"
-          ? { status: { in: ["RETURNED", "CANCELLED", "DISPUTED"] as const } }
-          : undefined;
-
+  if (statusFilter === "active") {
+    return prisma.keyRequest.findMany({
+      where: { status: { in: ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] } },
+      include: { requester: { select: { id: true, fullName: true, email: true } }, apartment: { include: { block: true } }, key: { include: { cabinet: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+  if (statusFilter === "overdue") {
+    return prisma.keyRequest.findMany({
+      where: { status: "PICKED_UP", dueAt: { lt: now } },
+      include: { requester: { select: { id: true, fullName: true, email: true } }, apartment: { include: { block: true } }, key: { include: { cabinet: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+  if (statusFilter === "completed") {
+    return prisma.keyRequest.findMany({
+      where: { status: { in: ["RETURNED", "CANCELLED", "DISPUTED"] } },
+      include: { requester: { select: { id: true, fullName: true, email: true } }, apartment: { include: { block: true } }, key: { include: { cabinet: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+  }
   return prisma.keyRequest.findMany({
-    where,
-    include: {
-      requester: { select: { id: true, fullName: true, email: true } },
-      apartment: { include: { block: true } },
-      key: { include: { cabinet: true } },
-    },
+    include: { requester: { select: { id: true, fullName: true, email: true } }, apartment: { include: { block: true } }, key: { include: { cabinet: true } } },
     orderBy: { createdAt: "desc" },
   });
 }
