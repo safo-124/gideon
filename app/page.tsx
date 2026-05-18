@@ -84,7 +84,9 @@ function RequestPanel({ request, now }: { request: ActiveRequest; now: Date }) {
         </div>
 
         <p className="mt-4 text-xs text-teal-700 dark:text-teal-400">
-          You have 6 hours from pickup to return the key. Overage is €5.00/hr.
+          {request.type === "FOR_OTHER"
+            ? "Pick up the key and pass it to the resident. You have 6 hours to return it. Overage is €5.00/hr."
+            : "You have 6 hours from pickup to return the key. Overage is €5.00/hr."}
         </p>
 
         <form action={markPickedUp} className="mt-4">
@@ -209,13 +211,18 @@ export default async function HomePage({
             </div>
           </Link>
 
-          <div className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 opacity-50">
+          <Link
+            className="group rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950"
+            href="/request/for-someone"
+          >
             <div className="text-sm font-semibold">Request for someone</div>
             <p className="mt-2 text-sm text-zinc-500">
               Request a key on behalf of another tenant in the building.
             </p>
-            <div className="mt-4 text-xs text-zinc-400">Coming soon</div>
-          </div>
+            <div className="mt-4 text-xs font-medium text-teal-700 group-hover:underline dark:text-teal-400">
+              Start request →
+            </div>
+          </Link>
         </div>
       )}
     </main>

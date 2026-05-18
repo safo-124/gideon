@@ -1,5 +1,6 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireTenant } from "@/lib/auth";
@@ -29,6 +30,33 @@ export async function createSelfRequest(_formData: FormData) {
   redirect(`/request/${request.id}/pay`);
 }
 
+export async function createForOtherRequest(formData: FormData) {
+  const tenant = await requireTenant();
+  const existing = await getActiveRequest(tenant.id);
+  if (existing) redirect("/");
+
+  const apartmentId = Number(formData.get("apartmentId"));
+  if (!Number.isInteger(apartmentId) || apartmentId <= 0) redirect("/request/for-someone");
+
+  if (apartmentId === tenant.apartmentId) {
+    redirect("/request/for-someone?error=Use+the+spare+key+request+for+your+own+apartment.");
+  }
+
+  const apartment = await prisma.apartment.findUnique({ where: { id: apartmentId } });
+  if (!apartment) redirect("/request/for-someone?error=Apartment+not+found.");
+
+  const request = await prisma.keyRequest.create({
+    data: {
+      requesterId: tenant.id,
+      apartmentId,
+      type: "FOR_OTHER",
+      status: "AWAITING_PAYMENT",
+    },
+  });
+
+  redirect(`/request/${request.id}/pay`);
+}
+
 export async function payRequest(formData: FormData) {
   const tenant = await requireTenant();
   const requestId = parseId(formData);
@@ -45,9 +73,19 @@ export async function payRequest(formData: FormData) {
     redirect("/?error=No+spare+key+is+currently+available.+Try+again+later.");
   }
 
+  const paidAt = new Date();
+
   await prisma.keyRequest.update({
     where: { id: requestId },
-    data: { status: "PAID", paidAt: new Date(), keyId: key.id },
+    data: {
+      status: "PAID",
+      paidAt,
+      keyId: key.id,
+      ...(request.type === "FOR_OTHER" && {
+        disputeToken: randomBytes(24).toString("hex"),
+        disputeWindowEndsAt: new Date(paidAt.getTime() + 30 * 60 * 1000),
+      }),
+    },
   });
 
   revalidatePath("/");

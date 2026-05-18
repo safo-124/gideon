@@ -13,8 +13,9 @@ export function proxy(request: NextRequest) {
 
   const isTenantLogin = pathname === "/login";
   const isAdminLogin = pathname === "/admin/login";
+  const isPublic = pathname.startsWith("/dispute");
   const isAdminArea = pathname.startsWith("/admin") && !isAdminLogin;
-  const isTenantArea = !pathname.startsWith("/admin") && !isTenantLogin;
+  const isTenantArea = !pathname.startsWith("/admin") && !isTenantLogin && !isPublic;
 
   if (!hasSession && (isAdminArea || isTenantArea)) {
     const target = isAdminArea ? "/admin/login" : "/login";

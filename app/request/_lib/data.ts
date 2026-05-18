@@ -34,5 +34,30 @@ export async function findAvailableKey(apartmentId: number) {
   });
 }
 
+export async function getBlocks() {
+  return prisma.block.findMany({ orderBy: { name: "asc" } });
+}
+
+export async function getApartmentByBlockAndNumber(blockId: number, number: number) {
+  return prisma.apartment.findFirst({
+    where: { blockId, number },
+    include: {
+      block: true,
+      _count: { select: { tenants: true } },
+    },
+  });
+}
+
+export async function getRequestByDisputeToken(token: string) {
+  return prisma.keyRequest.findUnique({
+    where: { disputeToken: token },
+    include: {
+      apartment: { include: { block: true } },
+      requester: { select: { fullName: true } },
+    },
+  });
+}
+
 export type ActiveRequest = Awaited<ReturnType<typeof getActiveRequest>>;
 export type RequestDetail = Awaited<ReturnType<typeof getRequest>>;
+export type ApartmentWithBlock = Awaited<ReturnType<typeof getApartmentByBlockAndNumber>>;
