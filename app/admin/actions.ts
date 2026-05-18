@@ -9,6 +9,13 @@ import { prisma } from "@/lib/prisma";
 class ActionError extends Error {}
 
 const ADMIN_PATH = "/admin";
+const ADMIN_ROUTES = new Set([
+  "/admin",
+  "/admin/blocks",
+  "/admin/units",
+  "/admin/cabinets",
+  "/admin/keys",
+]);
 const KEY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const APARTMENT_UNIT_TYPES = [
   "STUDIO",
@@ -93,9 +100,15 @@ function normalizeKeyCode(value: string): string {
   return value.trim().toUpperCase();
 }
 
-function redirectWith(section: string, type: "notice" | "error", message: string): never {
+function returnPath(formData: FormData, fallbackPath: string) {
+  const value = field(formData, "returnTo");
+  if (ADMIN_ROUTES.has(value)) return value;
+  return fallbackPath;
+}
+
+function redirectBack(path: string, type: "notice" | "error", message: string): never {
   const params = new URLSearchParams({ [type]: message });
-  redirect(`${ADMIN_PATH}?${params.toString()}#${section}`);
+  redirect(`${path}?${params.toString()}`);
 }
 
 function actionMessage(error: unknown): string {
@@ -115,24 +128,27 @@ function actionMessage(error: unknown): string {
 }
 
 async function runAdminAction(
-  section: string,
+  formData: FormData,
+  fallbackPath: string,
   successMessage: string,
   mutation: () => Promise<void>,
 ) {
   await requireAdmin();
+  const path = returnPath(formData, fallbackPath);
 
   try {
     await mutation();
   } catch (error) {
-    redirectWith(section, "error", actionMessage(error));
+    redirectBack(path, "error", actionMessage(error));
   }
 
   revalidatePath(ADMIN_PATH);
-  redirectWith(section, "notice", successMessage);
+  revalidatePath(path);
+  redirectBack(path, "notice", successMessage);
 }
 
 export async function createBlock(formData: FormData) {
-  await runAdminAction("blocks", "Block created.", async () => {
+  await runAdminAction(formData, "/admin/blocks", "Block created.", async () => {
     await prisma.block.create({
       data: {
         name: requiredField(formData, "name", "Block name"),
@@ -144,7 +160,7 @@ export async function createBlock(formData: FormData) {
 }
 
 export async function updateBlock(formData: FormData) {
-  await runAdminAction("blocks", "Block updated.", async () => {
+  await runAdminAction(formData, "/admin/blocks", "Block updated.", async () => {
     await prisma.block.update({
       where: { id: idField(formData) },
       data: {
@@ -157,13 +173,13 @@ export async function updateBlock(formData: FormData) {
 }
 
 export async function deleteBlock(formData: FormData) {
-  await runAdminAction("blocks", "Block deleted.", async () => {
+  await runAdminAction(formData, "/admin/blocks", "Block deleted.", async () => {
     await prisma.block.delete({ where: { id: idField(formData) } });
   });
 }
 
 export async function createApartment(formData: FormData) {
-  await runAdminAction("apartments", "Apartment created.", async () => {
+  await runAdminAction(formData, "/admin/units", "Unit created.", async () => {
     await prisma.apartment.create({
       data: {
         number: intField(formData, "number", "Apartment number"),
@@ -177,7 +193,7 @@ export async function createApartment(formData: FormData) {
 }
 
 export async function updateApartment(formData: FormData) {
-  await runAdminAction("apartments", "Apartment updated.", async () => {
+  await runAdminAction(formData, "/admin/units", "Unit updated.", async () => {
     await prisma.apartment.update({
       where: { id: idField(formData) },
       data: {
@@ -192,13 +208,13 @@ export async function updateApartment(formData: FormData) {
 }
 
 export async function deleteApartment(formData: FormData) {
-  await runAdminAction("apartments", "Apartment deleted.", async () => {
+  await runAdminAction(formData, "/admin/units", "Unit deleted.", async () => {
     await prisma.apartment.delete({ where: { id: idField(formData) } });
   });
 }
 
 export async function createCabinet(formData: FormData) {
-  await runAdminAction("cabinets", "Cabinet created.", async () => {
+  await runAdminAction(formData, "/admin/cabinets", "Cabinet created.", async () => {
     const currentCode = field(formData, "currentCode") || randomDigits(4);
     if (!/^\d{4}$/.test(currentCode)) {
       throw new ActionError("Cabinet code must be exactly 4 digits.");
@@ -214,7 +230,7 @@ export async function createCabinet(formData: FormData) {
 }
 
 export async function updateCabinet(formData: FormData) {
-  await runAdminAction("cabinets", "Cabinet updated.", async () => {
+  await runAdminAction(formData, "/admin/cabinets", "Cabinet updated.", async () => {
     const currentCode = requiredField(formData, "currentCode", "Cabinet code");
     if (!/^\d{4}$/.test(currentCode)) {
       throw new ActionError("Cabinet code must be exactly 4 digits.");
@@ -231,13 +247,13 @@ export async function updateCabinet(formData: FormData) {
 }
 
 export async function deleteCabinet(formData: FormData) {
-  await runAdminAction("cabinets", "Cabinet deleted.", async () => {
+  await runAdminAction(formData, "/admin/cabinets", "Cabinet deleted.", async () => {
     await prisma.cabinet.delete({ where: { id: idField(formData) } });
   });
 }
 
 export async function createKey(formData: FormData) {
-  await runAdminAction("keys", "Key created.", async () => {
+  await runAdminAction(formData, "/admin/keys", "Key created.", async () => {
     const apartmentIds = selectedIds(formData, "apartmentIds");
     if (apartmentIds.length === 0) {
       throw new ActionError("Select at least one unit for this key.");
@@ -256,7 +272,7 @@ export async function createKey(formData: FormData) {
 }
 
 export async function updateKey(formData: FormData) {
-  await runAdminAction("keys", "Key updated.", async () => {
+  await runAdminAction(formData, "/admin/keys", "Key updated.", async () => {
     const keyId = idField(formData);
     const apartmentIds = selectedIds(formData, "apartmentIds");
     if (apartmentIds.length === 0) {
@@ -280,7 +296,7 @@ export async function updateKey(formData: FormData) {
 }
 
 export async function deleteKey(formData: FormData) {
-  await runAdminAction("keys", "Key deleted.", async () => {
+  await runAdminAction(formData, "/admin/keys", "Key deleted.", async () => {
     await prisma.key.delete({ where: { id: idField(formData) } });
   });
 }
