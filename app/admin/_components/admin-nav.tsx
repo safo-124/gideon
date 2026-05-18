@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 type Counts = {
   blocks: number;
   units: number;
+  tenants: number;
   cabinets: number;
   keys: number;
 };
@@ -14,6 +15,7 @@ const navItems = [
   { href: "/admin", label: "Overview", countKey: null },
   { href: "/admin/blocks", label: "Blocks", countKey: "blocks" },
   { href: "/admin/units", label: "Units", countKey: "units" },
+  { href: "/admin/tenants", label: "Tenants", countKey: "tenants" },
   { href: "/admin/cabinets", label: "Cabinets", countKey: "cabinets" },
   { href: "/admin/keys", label: "Keys", countKey: "keys" },
 ] as const;

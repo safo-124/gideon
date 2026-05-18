@@ -13,6 +13,7 @@ const ADMIN_ROUTES = new Set([
   "/admin",
   "/admin/blocks",
   "/admin/units",
+  "/admin/tenants",
   "/admin/cabinets",
   "/admin/keys",
 ]);

@@ -39,6 +39,21 @@ export async function getUnits() {
   });
 }
 
+export async function getTenants() {
+  return prisma.tenant.findMany({
+    orderBy: { fullName: "asc" },
+    include: {
+      apartment: {
+        include: {
+          block: true,
+          _count: { select: { tenants: true, keys: true } },
+        },
+      },
+      _count: { select: { requests: true } },
+    },
+  });
+}
+
 export async function getCabinets() {
   return prisma.cabinet.findMany({
     orderBy: { number: "asc" },
@@ -61,18 +76,20 @@ export async function getKeys() {
 }
 
 export async function getOverviewData() {
-  const [blocks, units, cabinets, keys] = await Promise.all([
+  const [blocks, units, tenants, cabinets, keys] = await Promise.all([
     getBlocks(),
     getUnits(),
+    getTenants(),
     getCabinets(),
     getKeys(),
   ]);
 
-  return { blocks, units, cabinets, keys };
+  return { blocks, units, tenants, cabinets, keys };
 }
 
 export type BlockRow = Awaited<ReturnType<typeof getBlocks>>[number];
 export type UnitRow = Awaited<ReturnType<typeof getUnits>>[number];
+export type TenantRow = Awaited<ReturnType<typeof getTenants>>[number];
 export type CabinetRow = Awaited<ReturnType<typeof getCabinets>>[number];
 export type KeyRow = Awaited<ReturnType<typeof getKeys>>[number];
 

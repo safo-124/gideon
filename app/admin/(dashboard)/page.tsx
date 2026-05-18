@@ -24,6 +24,11 @@ const quickLinks = [
     description: "Track studios, shared rooms, capacity, and occupancy.",
   },
   {
+    href: "/admin/tenants",
+    title: "Tenants",
+    description: "Review tenant contact details and assigned units.",
+  },
+  {
     href: "/admin/cabinets",
     title: "Cabinets",
     description: "Manage physical cabinet slots and active codes.",
@@ -43,7 +48,7 @@ export default async function AdminOverviewPage({
   const params = await searchParams;
   const notice = firstParam(params.notice);
   const error = firstParam(params.error);
-  const { blocks, units, cabinets, keys } = await getOverviewData();
+  const { blocks, units, tenants, cabinets, keys } = await getOverviewData();
 
   const totalCapacity = units.reduce((sum, unit) => sum + unit.capacity, 0);
   const occupiedBeds = units.reduce((sum, unit) => sum + unit._count.tenants, 0);
@@ -62,9 +67,10 @@ export default async function AdminOverviewPage({
 
       <Flash error={error} notice={notice} />
 
-      <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard helper={`${blocks.length} blocks`} label="Units" tone="teal" value={units.length} />
         <StatCard helper={`${openBeds} open`} label="Bed capacity" tone="amber" value={totalCapacity} />
+        <StatCard helper={`${occupiedBeds} occupied beds`} label="Tenants" tone="zinc" value={tenants.length} />
         <StatCard helper="Tenant records" label="Occupied beds" tone="zinc" value={occupiedBeds} />
         <StatCard
           helper={overCapacity.length > 0 ? "Needs review" : "Available capacity"}
@@ -74,7 +80,7 @@ export default async function AdminOverviewPage({
         />
       </div>
 
-      <div className="mb-8 grid gap-3 lg:grid-cols-4">
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {quickLinks.map((item) => (
           <Link
             className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition hover:border-teal-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950"
