@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Block {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  streetName String
+  zip        String
+  apartments Apartment[]
+}
+
+model Apartment {
+  id      Int            @id @default(autoincrement())
+  number  Int
+  block   Block          @relation(fields: [blockId], references: [id])
+  blockId Int
+  tenants Tenant[]
+  keys    KeyApartment[]
+  requests KeyRequest[]
+
+  @@unique([blockId, number])
+}
+
+model Tenant {
+  id            Int          @id @default(autoincrement())
+  fullName      String
+  email         String       @unique
+  passwordHash  String
+  profilePicUrl String?
+  apartment     Apartment    @relation(fields: [apartmentId], references: [id])
+  apartmentId   Int
+  requests      KeyRequest[]
+  createdAt     DateTime     @default(now())
+}
+
+model Cabinet {
+  id            Int    @id @default(autoincrement())
+  number        Int    @unique
+  currentCode   String // 4-digit code, rotates on open/close
+  keys          Key[]
+}
+
+model Key {
+  id         Int            @id @default(autoincrement())
+  code       String         @unique // 8-char alphanumeric
+  cabinet    Cabinet        @relation(fields: [cabinetId], references: [id])
+  cabinetId  Int
+  apartments KeyApartment[]
+  requests   KeyRequest[]
+  createdAt  DateTime       @default(now())
+}
+
+model KeyApartment {
+  key         Key       @relation(fields: [keyId], references: [id], onDelete: Cascade)
+  keyId       Int
+  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  apartmentId Int
+
+  @@id([keyId, apartmentId])
+}
+
+enum RequestType {
+  SELF
+  FOR_OTHER
+}
+
+enum RequestStatus {
+  PENDING_AUTH        // FOR_OTHER awaiting tenant disclaimer acceptance
+  AWAITING_PAYMENT
+  PAID                // cabinet+code emailed; window started
+  PICKED_UP
+  RETURNED
+  CANCELLED
+  DISPUTED            // owner reported as unauthorized
+}
+
+model KeyRequest {
+  id              Int           @id @default(autoincrement())
+  requester       Tenant        @relation(fields: [requesterId], references: [id])
+  requesterId     Int
+  apartment       Apartment     @relation(fields: [apartmentId], references: [id])
+  apartmentId     Int
+  key             Key?          @relation(fields: [keyId], references: [id])
+  keyId           Int?
+  type            RequestType
+  status          RequestStatus @default(AWAITING_PAYMENT)
+  amountCents     Int           @default(2000) // base €20
+  overdueFeeCents Int           @default(0)
+  // Authorization (FOR_OTHER)
+  disputeToken    String?       @unique
+  disputeWindowEndsAt DateTime?
+  // Lifecycle timestamps
+  paidAt          DateTime?
+  pickedAt        DateTime?
+  dueAt           DateTime?      // pickedAt + 6h
+  reminderSentAt  DateTime?
+  returnedAt      DateTime?
+  cancelledAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
