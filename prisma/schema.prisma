@@ -23,15 +23,28 @@ model Block {
 }
 
 model Apartment {
-  id      Int            @id @default(autoincrement())
-  number  Int
-  block   Block          @relation(fields: [blockId], references: [id])
-  blockId Int
-  tenants Tenant[]
-  keys    KeyApartment[]
+  id       Int               @id @default(autoincrement())
+  number   Int
+  unitType ApartmentUnitType @default(STUDIO)
+  capacity Int               @default(1)
+  notes    String?
+  block    Block             @relation(fields: [blockId], references: [id])
+  blockId  Int
+  tenants  Tenant[]
+  keys     KeyApartment[]
   requests KeyRequest[]
 
   @@unique([blockId, number])
+}
+
+enum ApartmentUnitType {
+  STUDIO
+  SHARED_ROOM
+  ONE_BEDROOM
+  TWO_BEDROOM
+  THREE_BEDROOM
+  FAMILY
+  OTHER
 }
 
 model Tenant {

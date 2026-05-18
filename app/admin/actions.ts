@@ -10,6 +10,17 @@ class ActionError extends Error {}
 
 const ADMIN_PATH = "/admin";
 const KEY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const APARTMENT_UNIT_TYPES = [
+  "STUDIO",
+  "SHARED_ROOM",
+  "ONE_BEDROOM",
+  "TWO_BEDROOM",
+  "THREE_BEDROOM",
+  "FAMILY",
+  "OTHER",
+] as const;
+
+type ApartmentUnitTypeValue = (typeof APARTMENT_UNIT_TYPES)[number];
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);
@@ -30,6 +41,22 @@ function intField(formData: FormData, name: string, label: string): number {
     throw new ActionError(`${label} must be a positive whole number.`);
   }
   return value;
+}
+
+function apartmentUnitTypeField(formData: FormData): ApartmentUnitTypeValue {
+  const value = field(formData, "unitType");
+  if (APARTMENT_UNIT_TYPES.includes(value as ApartmentUnitTypeValue)) {
+    return value as ApartmentUnitTypeValue;
+  }
+  throw new ActionError("Choose a valid unit type.");
+}
+
+function apartmentNotesField(formData: FormData): string | null {
+  const notes = field(formData, "notes");
+  if (notes.length > 240) {
+    throw new ActionError("Notes must be 240 characters or fewer.");
+  }
+  return notes || null;
 }
 
 function requiredField(formData: FormData, name: string, label: string): string {
@@ -141,6 +168,9 @@ export async function createApartment(formData: FormData) {
       data: {
         number: intField(formData, "number", "Apartment number"),
         blockId: idField(formData, "blockId"),
+        unitType: apartmentUnitTypeField(formData),
+        capacity: intField(formData, "capacity", "Capacity"),
+        notes: apartmentNotesField(formData),
       },
     });
   });
@@ -153,6 +183,9 @@ export async function updateApartment(formData: FormData) {
       data: {
         number: intField(formData, "number", "Apartment number"),
         blockId: idField(formData, "blockId"),
+        unitType: apartmentUnitTypeField(formData),
+        capacity: intField(formData, "capacity", "Capacity"),
+        notes: apartmentNotesField(formData),
       },
     });
   });
@@ -207,7 +240,7 @@ export async function createKey(formData: FormData) {
   await runAdminAction("keys", "Key created.", async () => {
     const apartmentIds = selectedIds(formData, "apartmentIds");
     if (apartmentIds.length === 0) {
-      throw new ActionError("Select at least one apartment for this key.");
+      throw new ActionError("Select at least one unit for this key.");
     }
 
     await prisma.key.create({
@@ -227,7 +260,7 @@ export async function updateKey(formData: FormData) {
     const keyId = idField(formData);
     const apartmentIds = selectedIds(formData, "apartmentIds");
     if (apartmentIds.length === 0) {
-      throw new ActionError("Select at least one apartment for this key.");
+      throw new ActionError("Select at least one unit for this key.");
     }
 
     await prisma.$transaction([

@@ -9,6 +9,19 @@
 * 🟢 You can import this file directly.
 */
 
+export const ApartmentUnitType = {
+  STUDIO: 'STUDIO',
+  SHARED_ROOM: 'SHARED_ROOM',
+  ONE_BEDROOM: 'ONE_BEDROOM',
+  TWO_BEDROOM: 'TWO_BEDROOM',
+  THREE_BEDROOM: 'THREE_BEDROOM',
+  FAMILY: 'FAMILY',
+  OTHER: 'OTHER'
+} as const
+
+export type ApartmentUnitType = (typeof ApartmentUnitType)[keyof typeof ApartmentUnitType]
+
+
 export const RequestType = {
   SELF: 'SELF',
   FOR_OTHER: 'FOR_OTHER'

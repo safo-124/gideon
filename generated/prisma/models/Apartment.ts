@@ -29,30 +29,41 @@ export type AggregateApartment = {
 export type ApartmentAvgAggregateOutputType = {
   id: number | null
   number: number | null
+  capacity: number | null
   blockId: number | null
 }
 
 export type ApartmentSumAggregateOutputType = {
   id: number | null
   number: number | null
+  capacity: number | null
   blockId: number | null
 }
 
 export type ApartmentMinAggregateOutputType = {
   id: number | null
   number: number | null
+  unitType: $Enums.ApartmentUnitType | null
+  capacity: number | null
+  notes: string | null
   blockId: number | null
 }
 
 export type ApartmentMaxAggregateOutputType = {
   id: number | null
   number: number | null
+  unitType: $Enums.ApartmentUnitType | null
+  capacity: number | null
+  notes: string | null
   blockId: number | null
 }
 
 export type ApartmentCountAggregateOutputType = {
   id: number
   number: number
+  unitType: number
+  capacity: number
+  notes: number
   blockId: number
   _all: number
 }
@@ -61,30 +72,41 @@ export type ApartmentCountAggregateOutputType = {
 export type ApartmentAvgAggregateInputType = {
   id?: true
   number?: true
+  capacity?: true
   blockId?: true
 }
 
 export type ApartmentSumAggregateInputType = {
   id?: true
   number?: true
+  capacity?: true
   blockId?: true
 }
 
 export type ApartmentMinAggregateInputType = {
   id?: true
   number?: true
+  unitType?: true
+  capacity?: true
+  notes?: true
   blockId?: true
 }
 
 export type ApartmentMaxAggregateInputType = {
   id?: true
   number?: true
+  unitType?: true
+  capacity?: true
+  notes?: true
   blockId?: true
 }
 
 export type ApartmentCountAggregateInputType = {
   id?: true
   number?: true
+  unitType?: true
+  capacity?: true
+  notes?: true
   blockId?: true
   _all?: true
 }
@@ -178,6 +200,9 @@ export type ApartmentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type ApartmentGroupByOutputType = {
   id: number
   number: number
+  unitType: $Enums.ApartmentUnitType
+  capacity: number
+  notes: string | null
   blockId: number
   _count: ApartmentCountAggregateOutputType | null
   _avg: ApartmentAvgAggregateOutputType | null
@@ -207,6 +232,9 @@ export type ApartmentWhereInput = {
   NOT?: Prisma.ApartmentWhereInput | Prisma.ApartmentWhereInput[]
   id?: Prisma.IntFilter<"Apartment"> | number
   number?: Prisma.IntFilter<"Apartment"> | number
+  unitType?: Prisma.EnumApartmentUnitTypeFilter<"Apartment"> | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFilter<"Apartment"> | number
+  notes?: Prisma.StringNullableFilter<"Apartment"> | string | null
   blockId?: Prisma.IntFilter<"Apartment"> | number
   block?: Prisma.XOR<Prisma.BlockScalarRelationFilter, Prisma.BlockWhereInput>
   tenants?: Prisma.TenantListRelationFilter
@@ -217,6 +245,9 @@ export type ApartmentWhereInput = {
 export type ApartmentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   number?: Prisma.SortOrder
+  unitType?: Prisma.SortOrder
+  capacity?: Prisma.SortOrder
+  notes?: Prisma.SortOrderInput | Prisma.SortOrder
   blockId?: Prisma.SortOrder
   block?: Prisma.BlockOrderByWithRelationInput
   tenants?: Prisma.TenantOrderByRelationAggregateInput
@@ -231,6 +262,9 @@ export type ApartmentWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ApartmentWhereInput[]
   NOT?: Prisma.ApartmentWhereInput | Prisma.ApartmentWhereInput[]
   number?: Prisma.IntFilter<"Apartment"> | number
+  unitType?: Prisma.EnumApartmentUnitTypeFilter<"Apartment"> | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFilter<"Apartment"> | number
+  notes?: Prisma.StringNullableFilter<"Apartment"> | string | null
   blockId?: Prisma.IntFilter<"Apartment"> | number
   block?: Prisma.XOR<Prisma.BlockScalarRelationFilter, Prisma.BlockWhereInput>
   tenants?: Prisma.TenantListRelationFilter
@@ -241,6 +275,9 @@ export type ApartmentWhereUniqueInput = Prisma.AtLeast<{
 export type ApartmentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   number?: Prisma.SortOrder
+  unitType?: Prisma.SortOrder
+  capacity?: Prisma.SortOrder
+  notes?: Prisma.SortOrderInput | Prisma.SortOrder
   blockId?: Prisma.SortOrder
   _count?: Prisma.ApartmentCountOrderByAggregateInput
   _avg?: Prisma.ApartmentAvgOrderByAggregateInput
@@ -255,11 +292,17 @@ export type ApartmentScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ApartmentScalarWhereWithAggregatesInput | Prisma.ApartmentScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Apartment"> | number
   number?: Prisma.IntWithAggregatesFilter<"Apartment"> | number
+  unitType?: Prisma.EnumApartmentUnitTypeWithAggregatesFilter<"Apartment"> | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntWithAggregatesFilter<"Apartment"> | number
+  notes?: Prisma.StringNullableWithAggregatesFilter<"Apartment"> | string | null
   blockId?: Prisma.IntWithAggregatesFilter<"Apartment"> | number
 }
 
 export type ApartmentCreateInput = {
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   block: Prisma.BlockCreateNestedOneWithoutApartmentsInput
   tenants?: Prisma.TenantCreateNestedManyWithoutApartmentInput
   keys?: Prisma.KeyApartmentCreateNestedManyWithoutApartmentInput
@@ -269,6 +312,9 @@ export type ApartmentCreateInput = {
 export type ApartmentUncheckedCreateInput = {
   id?: number
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   blockId: number
   tenants?: Prisma.TenantUncheckedCreateNestedManyWithoutApartmentInput
   keys?: Prisma.KeyApartmentUncheckedCreateNestedManyWithoutApartmentInput
@@ -277,6 +323,9 @@ export type ApartmentUncheckedCreateInput = {
 
 export type ApartmentUpdateInput = {
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.BlockUpdateOneRequiredWithoutApartmentsNestedInput
   tenants?: Prisma.TenantUpdateManyWithoutApartmentNestedInput
   keys?: Prisma.KeyApartmentUpdateManyWithoutApartmentNestedInput
@@ -286,6 +335,9 @@ export type ApartmentUpdateInput = {
 export type ApartmentUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blockId?: Prisma.IntFieldUpdateOperationsInput | number
   tenants?: Prisma.TenantUncheckedUpdateManyWithoutApartmentNestedInput
   keys?: Prisma.KeyApartmentUncheckedUpdateManyWithoutApartmentNestedInput
@@ -295,16 +347,25 @@ export type ApartmentUncheckedUpdateInput = {
 export type ApartmentCreateManyInput = {
   id?: number
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   blockId: number
 }
 
 export type ApartmentUpdateManyMutationInput = {
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApartmentUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blockId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -326,30 +387,41 @@ export type ApartmentBlockIdNumberCompoundUniqueInput = {
 export type ApartmentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   number?: Prisma.SortOrder
+  unitType?: Prisma.SortOrder
+  capacity?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   blockId?: Prisma.SortOrder
 }
 
 export type ApartmentAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   number?: Prisma.SortOrder
+  capacity?: Prisma.SortOrder
   blockId?: Prisma.SortOrder
 }
 
 export type ApartmentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   number?: Prisma.SortOrder
+  unitType?: Prisma.SortOrder
+  capacity?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   blockId?: Prisma.SortOrder
 }
 
 export type ApartmentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   number?: Prisma.SortOrder
+  unitType?: Prisma.SortOrder
+  capacity?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
   blockId?: Prisma.SortOrder
 }
 
 export type ApartmentSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   number?: Prisma.SortOrder
+  capacity?: Prisma.SortOrder
   blockId?: Prisma.SortOrder
 }
 
@@ -400,6 +472,14 @@ export type ApartmentUncheckedUpdateManyWithoutBlockNestedInput = {
   deleteMany?: Prisma.ApartmentScalarWhereInput | Prisma.ApartmentScalarWhereInput[]
 }
 
+export type EnumApartmentUnitTypeFieldUpdateOperationsInput = {
+  set?: $Enums.ApartmentUnitType
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type ApartmentCreateNestedOneWithoutTenantsInput = {
   create?: Prisma.XOR<Prisma.ApartmentCreateWithoutTenantsInput, Prisma.ApartmentUncheckedCreateWithoutTenantsInput>
   connectOrCreate?: Prisma.ApartmentCreateOrConnectWithoutTenantsInput
@@ -444,6 +524,9 @@ export type ApartmentUpdateOneRequiredWithoutRequestsNestedInput = {
 
 export type ApartmentCreateWithoutBlockInput = {
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   tenants?: Prisma.TenantCreateNestedManyWithoutApartmentInput
   keys?: Prisma.KeyApartmentCreateNestedManyWithoutApartmentInput
   requests?: Prisma.KeyRequestCreateNestedManyWithoutApartmentInput
@@ -452,6 +535,9 @@ export type ApartmentCreateWithoutBlockInput = {
 export type ApartmentUncheckedCreateWithoutBlockInput = {
   id?: number
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   tenants?: Prisma.TenantUncheckedCreateNestedManyWithoutApartmentInput
   keys?: Prisma.KeyApartmentUncheckedCreateNestedManyWithoutApartmentInput
   requests?: Prisma.KeyRequestUncheckedCreateNestedManyWithoutApartmentInput
@@ -489,11 +575,17 @@ export type ApartmentScalarWhereInput = {
   NOT?: Prisma.ApartmentScalarWhereInput | Prisma.ApartmentScalarWhereInput[]
   id?: Prisma.IntFilter<"Apartment"> | number
   number?: Prisma.IntFilter<"Apartment"> | number
+  unitType?: Prisma.EnumApartmentUnitTypeFilter<"Apartment"> | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFilter<"Apartment"> | number
+  notes?: Prisma.StringNullableFilter<"Apartment"> | string | null
   blockId?: Prisma.IntFilter<"Apartment"> | number
 }
 
 export type ApartmentCreateWithoutTenantsInput = {
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   block: Prisma.BlockCreateNestedOneWithoutApartmentsInput
   keys?: Prisma.KeyApartmentCreateNestedManyWithoutApartmentInput
   requests?: Prisma.KeyRequestCreateNestedManyWithoutApartmentInput
@@ -502,6 +594,9 @@ export type ApartmentCreateWithoutTenantsInput = {
 export type ApartmentUncheckedCreateWithoutTenantsInput = {
   id?: number
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   blockId: number
   keys?: Prisma.KeyApartmentUncheckedCreateNestedManyWithoutApartmentInput
   requests?: Prisma.KeyRequestUncheckedCreateNestedManyWithoutApartmentInput
@@ -525,6 +620,9 @@ export type ApartmentUpdateToOneWithWhereWithoutTenantsInput = {
 
 export type ApartmentUpdateWithoutTenantsInput = {
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.BlockUpdateOneRequiredWithoutApartmentsNestedInput
   keys?: Prisma.KeyApartmentUpdateManyWithoutApartmentNestedInput
   requests?: Prisma.KeyRequestUpdateManyWithoutApartmentNestedInput
@@ -533,6 +631,9 @@ export type ApartmentUpdateWithoutTenantsInput = {
 export type ApartmentUncheckedUpdateWithoutTenantsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blockId?: Prisma.IntFieldUpdateOperationsInput | number
   keys?: Prisma.KeyApartmentUncheckedUpdateManyWithoutApartmentNestedInput
   requests?: Prisma.KeyRequestUncheckedUpdateManyWithoutApartmentNestedInput
@@ -540,6 +641,9 @@ export type ApartmentUncheckedUpdateWithoutTenantsInput = {
 
 export type ApartmentCreateWithoutKeysInput = {
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   block: Prisma.BlockCreateNestedOneWithoutApartmentsInput
   tenants?: Prisma.TenantCreateNestedManyWithoutApartmentInput
   requests?: Prisma.KeyRequestCreateNestedManyWithoutApartmentInput
@@ -548,6 +652,9 @@ export type ApartmentCreateWithoutKeysInput = {
 export type ApartmentUncheckedCreateWithoutKeysInput = {
   id?: number
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   blockId: number
   tenants?: Prisma.TenantUncheckedCreateNestedManyWithoutApartmentInput
   requests?: Prisma.KeyRequestUncheckedCreateNestedManyWithoutApartmentInput
@@ -571,6 +678,9 @@ export type ApartmentUpdateToOneWithWhereWithoutKeysInput = {
 
 export type ApartmentUpdateWithoutKeysInput = {
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.BlockUpdateOneRequiredWithoutApartmentsNestedInput
   tenants?: Prisma.TenantUpdateManyWithoutApartmentNestedInput
   requests?: Prisma.KeyRequestUpdateManyWithoutApartmentNestedInput
@@ -579,6 +689,9 @@ export type ApartmentUpdateWithoutKeysInput = {
 export type ApartmentUncheckedUpdateWithoutKeysInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blockId?: Prisma.IntFieldUpdateOperationsInput | number
   tenants?: Prisma.TenantUncheckedUpdateManyWithoutApartmentNestedInput
   requests?: Prisma.KeyRequestUncheckedUpdateManyWithoutApartmentNestedInput
@@ -586,6 +699,9 @@ export type ApartmentUncheckedUpdateWithoutKeysInput = {
 
 export type ApartmentCreateWithoutRequestsInput = {
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   block: Prisma.BlockCreateNestedOneWithoutApartmentsInput
   tenants?: Prisma.TenantCreateNestedManyWithoutApartmentInput
   keys?: Prisma.KeyApartmentCreateNestedManyWithoutApartmentInput
@@ -594,6 +710,9 @@ export type ApartmentCreateWithoutRequestsInput = {
 export type ApartmentUncheckedCreateWithoutRequestsInput = {
   id?: number
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
   blockId: number
   tenants?: Prisma.TenantUncheckedCreateNestedManyWithoutApartmentInput
   keys?: Prisma.KeyApartmentUncheckedCreateNestedManyWithoutApartmentInput
@@ -617,6 +736,9 @@ export type ApartmentUpdateToOneWithWhereWithoutRequestsInput = {
 
 export type ApartmentUpdateWithoutRequestsInput = {
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.BlockUpdateOneRequiredWithoutApartmentsNestedInput
   tenants?: Prisma.TenantUpdateManyWithoutApartmentNestedInput
   keys?: Prisma.KeyApartmentUpdateManyWithoutApartmentNestedInput
@@ -625,6 +747,9 @@ export type ApartmentUpdateWithoutRequestsInput = {
 export type ApartmentUncheckedUpdateWithoutRequestsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blockId?: Prisma.IntFieldUpdateOperationsInput | number
   tenants?: Prisma.TenantUncheckedUpdateManyWithoutApartmentNestedInput
   keys?: Prisma.KeyApartmentUncheckedUpdateManyWithoutApartmentNestedInput
@@ -633,10 +758,16 @@ export type ApartmentUncheckedUpdateWithoutRequestsInput = {
 export type ApartmentCreateManyBlockInput = {
   id?: number
   number: number
+  unitType?: $Enums.ApartmentUnitType
+  capacity?: number
+  notes?: string | null
 }
 
 export type ApartmentUpdateWithoutBlockInput = {
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenants?: Prisma.TenantUpdateManyWithoutApartmentNestedInput
   keys?: Prisma.KeyApartmentUpdateManyWithoutApartmentNestedInput
   requests?: Prisma.KeyRequestUpdateManyWithoutApartmentNestedInput
@@ -645,6 +776,9 @@ export type ApartmentUpdateWithoutBlockInput = {
 export type ApartmentUncheckedUpdateWithoutBlockInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenants?: Prisma.TenantUncheckedUpdateManyWithoutApartmentNestedInput
   keys?: Prisma.KeyApartmentUncheckedUpdateManyWithoutApartmentNestedInput
   requests?: Prisma.KeyRequestUncheckedUpdateManyWithoutApartmentNestedInput
@@ -653,6 +787,9 @@ export type ApartmentUncheckedUpdateWithoutBlockInput = {
 export type ApartmentUncheckedUpdateManyWithoutBlockInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   number?: Prisma.IntFieldUpdateOperationsInput | number
+  unitType?: Prisma.EnumApartmentUnitTypeFieldUpdateOperationsInput | $Enums.ApartmentUnitType
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -707,6 +844,9 @@ export type ApartmentCountOutputTypeCountRequestsArgs<ExtArgs extends runtime.Ty
 export type ApartmentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   number?: boolean
+  unitType?: boolean
+  capacity?: boolean
+  notes?: boolean
   blockId?: boolean
   block?: boolean | Prisma.BlockDefaultArgs<ExtArgs>
   tenants?: boolean | Prisma.Apartment$tenantsArgs<ExtArgs>
@@ -718,6 +858,9 @@ export type ApartmentSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type ApartmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   number?: boolean
+  unitType?: boolean
+  capacity?: boolean
+  notes?: boolean
   blockId?: boolean
   block?: boolean | Prisma.BlockDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["apartment"]>
@@ -725,6 +868,9 @@ export type ApartmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type ApartmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   number?: boolean
+  unitType?: boolean
+  capacity?: boolean
+  notes?: boolean
   blockId?: boolean
   block?: boolean | Prisma.BlockDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["apartment"]>
@@ -732,10 +878,13 @@ export type ApartmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type ApartmentSelectScalar = {
   id?: boolean
   number?: boolean
+  unitType?: boolean
+  capacity?: boolean
+  notes?: boolean
   blockId?: boolean
 }
 
-export type ApartmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "number" | "blockId", ExtArgs["result"]["apartment"]>
+export type ApartmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "number" | "unitType" | "capacity" | "notes" | "blockId", ExtArgs["result"]["apartment"]>
 export type ApartmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   block?: boolean | Prisma.BlockDefaultArgs<ExtArgs>
   tenants?: boolean | Prisma.Apartment$tenantsArgs<ExtArgs>
@@ -761,6 +910,9 @@ export type $ApartmentPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     number: number
+    unitType: $Enums.ApartmentUnitType
+    capacity: number
+    notes: string | null
     blockId: number
   }, ExtArgs["result"]["apartment"]>
   composites: {}
@@ -1191,6 +1343,9 @@ export interface Prisma__ApartmentClient<T, Null = never, ExtArgs extends runtim
 export interface ApartmentFieldRefs {
   readonly id: Prisma.FieldRef<"Apartment", 'Int'>
   readonly number: Prisma.FieldRef<"Apartment", 'Int'>
+  readonly unitType: Prisma.FieldRef<"Apartment", 'ApartmentUnitType'>
+  readonly capacity: Prisma.FieldRef<"Apartment", 'Int'>
+  readonly notes: Prisma.FieldRef<"Apartment", 'String'>
   readonly blockId: Prisma.FieldRef<"Apartment", 'Int'>
 }
     

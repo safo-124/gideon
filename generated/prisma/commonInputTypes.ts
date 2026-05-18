@@ -99,6 +99,13 @@ export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type EnumApartmentUnitTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ApartmentUnitType | Prisma.EnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumApartmentUnitTypeFilter<$PrismaModel> | $Enums.ApartmentUnitType
+}
+
 export type StringNullableFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
@@ -117,6 +124,16 @@ export type StringNullableFilter<$PrismaModel = never> = {
 export type SortOrderInput = {
   sort: Prisma.SortOrder
   nulls?: Prisma.NullsOrder
+}
+
+export type EnumApartmentUnitTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ApartmentUnitType | Prisma.EnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumApartmentUnitTypeWithAggregatesFilter<$PrismaModel> | $Enums.ApartmentUnitType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumApartmentUnitTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumApartmentUnitTypeFilter<$PrismaModel>
 }
 
 export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -317,6 +334,13 @@ export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type NestedEnumApartmentUnitTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ApartmentUnitType | Prisma.EnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumApartmentUnitTypeFilter<$PrismaModel> | $Enums.ApartmentUnitType
+}
+
 export type NestedStringNullableFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
@@ -329,6 +353,16 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
   endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
+}
+
+export type NestedEnumApartmentUnitTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ApartmentUnitType | Prisma.EnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ApartmentUnitType[] | Prisma.ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumApartmentUnitTypeWithAggregatesFilter<$PrismaModel> | $Enums.ApartmentUnitType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumApartmentUnitTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumApartmentUnitTypeFilter<$PrismaModel>
 }
 
 export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {

@@ -100,6 +100,9 @@ export type BlockScalarFieldEnum = (typeof BlockScalarFieldEnum)[keyof typeof Bl
 export const ApartmentScalarFieldEnum = {
   id: 'id',
   number: 'number',
+  unitType: 'unitType',
+  capacity: 'capacity',
+  notes: 'notes',
   blockId: 'blockId'
 } as const
 

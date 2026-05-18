@@ -27,6 +27,15 @@ const subtleButtonClass =
   "inline-flex h-9 items-center justify-center rounded-md border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900";
 const dangerButtonClass =
   "inline-flex h-9 items-center justify-center rounded-md border border-red-200 bg-white px-3 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-red-900/70 dark:bg-zinc-950 dark:text-red-300 dark:hover:bg-red-950/30";
+const unitTypeOptions = [
+  { value: "STUDIO", label: "Studio" },
+  { value: "SHARED_ROOM", label: "Shared room" },
+  { value: "ONE_BEDROOM", label: "1 bedroom" },
+  { value: "TWO_BEDROOM", label: "2 bedroom" },
+  { value: "THREE_BEDROOM", label: "3 bedroom" },
+  { value: "FAMILY", label: "Family unit" },
+  { value: "OTHER", label: "Other" },
+] as const;
 
 async function getAdminData() {
   const [blocks, apartments, cabinets, keys] = await Promise.all([
@@ -72,8 +81,16 @@ function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function apartmentLabel(apartment: Pick<ApartmentRow, "number" | "block">) {
-  return `${apartment.block.name} / Apt ${apartment.number}`;
+function unitTypeLabel(value: string) {
+  return unitTypeOptions.find((option) => option.value === value)?.label ?? "Other";
+}
+
+function bedsLabel(capacity: number) {
+  return `${capacity} bed${capacity === 1 ? "" : "s"}`;
+}
+
+function apartmentLabel(apartment: Pick<ApartmentRow, "number" | "block" | "unitType" | "capacity">) {
+  return `${apartment.block.name} / Apt ${apartment.number} - ${unitTypeLabel(apartment.unitType)}, ${bedsLabel(apartment.capacity)}`;
 }
 
 function FieldLabel({ children }: { children: ReactNode }) {
@@ -251,6 +268,18 @@ function BlockSelect({
   );
 }
 
+function UnitTypeSelect({ defaultValue = "STUDIO" }: { defaultValue?: string }) {
+  return (
+    <select className={inputClass} defaultValue={defaultValue} name="unitType" required>
+      {unitTypeOptions.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 function CabinetSelect({
   cabinets,
   defaultValue,
@@ -284,7 +313,7 @@ function ApartmentChecklist({
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
         {apartments.map((apartment) => (
           <label
-            className="flex min-h-9 items-center gap-2 rounded-md px-2 text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-200 dark:hover:bg-zinc-900"
+            className="flex min-h-12 items-center gap-2 rounded-md px-2 text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-200 dark:hover:bg-zinc-900"
             key={apartment.id}
           >
             <input
@@ -294,7 +323,14 @@ function ApartmentChecklist({
               type="checkbox"
               value={apartment.id}
             />
-            <span>{apartmentLabel(apartment)}</span>
+            <span className="grid">
+              <span>
+                {apartment.block.name} / Apt {apartment.number}
+              </span>
+              <span className="text-xs text-zinc-500">
+                {unitTypeLabel(apartment.unitType)} - {bedsLabel(apartment.capacity)}
+              </span>
+            </span>
           </label>
         ))}
       </div>
@@ -374,35 +410,61 @@ function ApartmentsSection({
 }) {
   return (
     <section>
-      <SectionHeader count={apartments.length} id="apartments" title="Apartments" />
+      <SectionHeader count={apartments.length} id="apartments" title="Housing units" />
       <AddPanel>
-        <form action={createApartment} className="grid gap-3 lg:grid-cols-[1fr_10rem_auto]">
+        <form action={createApartment} className="grid gap-3 xl:grid-cols-[1fr_7rem_12rem_8rem_minmax(12rem,1fr)_auto]">
           <label>
             <FieldLabel>Block</FieldLabel>
             <BlockSelect blocks={blocks} />
           </label>
           <label>
-            <FieldLabel>Apartment</FieldLabel>
+            <FieldLabel>Apt</FieldLabel>
             <input className={inputClass} min="1" name="number" required type="number" />
+          </label>
+          <label>
+            <FieldLabel>Layout</FieldLabel>
+            <UnitTypeSelect />
+          </label>
+          <label>
+            <FieldLabel>Capacity</FieldLabel>
+            <input className={inputClass} defaultValue={1} min="1" name="capacity" required type="number" />
+          </label>
+          <label>
+            <FieldLabel>Notes</FieldLabel>
+            <input className={inputClass} maxLength={240} name="notes" placeholder="2 in a room, accessible, etc." />
           </label>
           <div className="flex items-end">
             <button className={buttonClass} disabled={blocks.length === 0} type="submit">
-              Add apartment
+              Add unit
             </button>
           </div>
         </form>
       </AddPanel>
 
       {apartments.length === 0 ? (
-        <EmptyState>No apartments yet.</EmptyState>
+        <EmptyState>No housing units yet.</EmptyState>
       ) : (
-        <RowList columns="grid-cols-[1fr_10rem_13rem_8rem_8rem]" headers={["Block", "Apt", "Linked", "", ""]}>
+        <RowList
+          columns="grid-cols-[1fr_7rem_12rem_10rem_minmax(12rem,1fr)_7rem_7rem]"
+          headers={["Block", "Apt", "Layout", "Capacity", "Notes", "", ""]}
+        >
           {apartments.map((apartment) => {
             const linkedCount =
               apartment._count.tenants + apartment._count.keys + apartment._count.requests;
+            const occupancyTone =
+              apartment._count.tenants > apartment.capacity
+                ? "red"
+                : apartment._count.tenants === apartment.capacity
+                  ? "amber"
+                  : apartment._count.tenants === 0
+                    ? "zinc"
+                    : "teal";
 
             return (
-              <div className="grid gap-3 px-4 py-3 md:grid-cols-[1fr_10rem_13rem_8rem_8rem] md:items-end" key={apartment.id}>
+              <div
+                className="grid gap-3 px-4 py-3 md:grid-cols-[1fr_7rem_12rem_10rem_minmax(12rem,1fr)_7rem_7rem] md:items-end"
+                key={apartment.id}
+              >
                 <form action={updateApartment} className="contents">
                   <input type="hidden" name="id" value={apartment.id} />
                   <label>
@@ -413,14 +475,36 @@ function ApartmentsSection({
                     <FieldLabel>Apt</FieldLabel>
                     <input className={inputClass} defaultValue={apartment.number} min="1" name="number" required type="number" />
                   </label>
-                  <div>
-                    <FieldLabel>Linked</FieldLabel>
-                    <div className="flex h-9 items-center gap-1 text-sm text-zinc-600 dark:text-zinc-400">
-                      <span>{apartment._count.tenants}T</span>
-                      <span>{apartment._count.keys}K</span>
-                      <span>{apartment._count.requests}R</span>
+                  <label>
+                    <FieldLabel>Layout</FieldLabel>
+                    <UnitTypeSelect defaultValue={apartment.unitType} />
+                  </label>
+                  <label>
+                    <FieldLabel>Capacity</FieldLabel>
+                    <div className="flex items-center gap-2">
+                      <input
+                        className="h-9 w-16 rounded-md border border-zinc-300 bg-white px-2 text-sm text-zinc-950 outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+                        defaultValue={apartment.capacity}
+                        min="1"
+                        name="capacity"
+                        required
+                        type="number"
+                      />
+                      <Pill tone={occupancyTone}>
+                        {apartment._count.tenants}/{apartment.capacity}
+                      </Pill>
                     </div>
-                  </div>
+                  </label>
+                  <label>
+                    <FieldLabel>Notes</FieldLabel>
+                    <input
+                      className={inputClass}
+                      defaultValue={apartment.notes ?? ""}
+                      maxLength={240}
+                      name="notes"
+                      placeholder="Optional"
+                    />
+                  </label>
                   <button className={subtleButtonClass} type="submit">
                     Save
                   </button>
@@ -510,7 +594,7 @@ function KeyCard({
           <div className="mt-1 text-sm text-zinc-500">Cabinet {keyRecord.cabinet.number}</div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Pill tone="teal">{mappedApartments.length} apartments</Pill>
+          <Pill tone="teal">{mappedApartments.length} units</Pill>
           <Pill tone={keyRecord._count.requests > 0 ? "amber" : "zinc"}>
             {keyRecord._count.requests} requests
           </Pill>
@@ -528,7 +612,7 @@ function KeyCard({
           <CabinetSelect cabinets={cabinets} defaultValue={keyRecord.cabinetId} />
         </label>
         <label>
-          <FieldLabel>Apartments</FieldLabel>
+          <FieldLabel>Units</FieldLabel>
           <ApartmentChecklist apartments={apartments} selectedIds={selectedIds} />
         </label>
         <div className="flex items-end">
@@ -539,7 +623,7 @@ function KeyCard({
       </form>
 
       <div className="mt-3 flex flex-col gap-3 border-t border-zinc-100 pt-3 dark:border-zinc-900 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm text-zinc-500">{mappedApartments.join(", ") || "No apartments assigned"}</div>
+        <div className="text-sm text-zinc-500">{mappedApartments.join(", ") || "No units assigned"}</div>
         <DeleteForm action={deleteKey} disabled={keyRecord._count.requests > 0} id={keyRecord.id} />
       </div>
     </div>
@@ -571,7 +655,7 @@ function KeysSection({
             <CabinetSelect cabinets={cabinets} />
           </label>
           <label>
-            <FieldLabel>Apartments</FieldLabel>
+            <FieldLabel>Units</FieldLabel>
             <ApartmentChecklist apartments={apartments} />
           </label>
           <div className="flex items-end">
@@ -606,7 +690,7 @@ function AdminNav({
 }) {
   const items = [
     ["blocks", "Blocks", blocks],
-    ["apartments", "Apartments", apartments],
+    ["apartments", "Units", apartments],
     ["cabinets", "Cabinets", cabinets],
     ["keys", "Keys", keys],
   ] as const;
@@ -640,8 +724,12 @@ export default async function AdminHomePage({
   const error = firstParam(params.error);
   const { blocks, apartments, cabinets, keys } = await getAdminData();
 
-  const assignedApartmentLinks = keys.reduce((sum, key) => sum + key.apartments.length, 0);
-  const cabinetsWithKeys = cabinets.filter((cabinet) => cabinet._count.keys > 0).length;
+  const totalCapacity = apartments.reduce((sum, apartment) => sum + apartment.capacity, 0);
+  const occupiedBeds = apartments.reduce((sum, apartment) => sum + apartment._count.tenants, 0);
+  const openBeds = Math.max(totalCapacity - occupiedBeds, 0);
+  const overcrowdedUnits = apartments.filter(
+    (apartment) => apartment._count.tenants > apartment.capacity,
+  ).length;
 
   return (
     <main className="min-h-full flex-1 bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
@@ -670,17 +758,21 @@ export default async function AdminHomePage({
           <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">Admin dashboard</h1>
-              <p className="mt-1 text-sm text-zinc-500">Inventory, access codes, and apartment coverage.</p>
+              <p className="mt-1 text-sm text-zinc-500">Housing capacity, access codes, and key coverage.</p>
             </div>
           </header>
 
           <Flash error={error} notice={notice} />
 
           <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard label="Apartments" tone="teal" value={apartments.length} />
-            <StatCard label="Assigned pairs" tone="amber" value={assignedApartmentLinks} />
-            <StatCard label="Cabinets in use" tone="zinc" value={cabinetsWithKeys} />
-            <StatCard label="Keys" tone="red" value={keys.length} />
+            <StatCard label="Units" tone="teal" value={apartments.length} />
+            <StatCard label="Bed capacity" tone="amber" value={totalCapacity} />
+            <StatCard label="Occupied beds" tone="zinc" value={occupiedBeds} />
+            <StatCard
+              label={overcrowdedUnits > 0 ? "Over capacity" : "Open beds"}
+              tone={overcrowdedUnits > 0 ? "red" : "teal"}
+              value={overcrowdedUnits || openBeds}
+            />
           </div>
 
           <div className="space-y-10">

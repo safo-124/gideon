@@ -39,6 +39,27 @@ function pickPair(apartments: Array<{ id: number; number: number; blockId: numbe
   throw new Error("Could not find a valid apartment pair under the spacing constraint");
 }
 
+type ApartmentSeedProfile = {
+  unitType:
+    | "STUDIO"
+    | "SHARED_ROOM"
+    | "ONE_BEDROOM"
+    | "TWO_BEDROOM"
+    | "THREE_BEDROOM"
+    | "FAMILY"
+    | "OTHER";
+  capacity: number;
+  notes?: string;
+};
+
+function apartmentProfile(number: number): ApartmentSeedProfile {
+  if (number % 10 === 0) return { unitType: "FAMILY", capacity: 4, notes: "Family unit" };
+  if (number % 8 === 0) return { unitType: "THREE_BEDROOM", capacity: 3, notes: "Three-person room" };
+  if (number % 5 === 0) return { unitType: "SHARED_ROOM", capacity: 2, notes: "Two-person shared room" };
+  if (number % 4 === 0) return { unitType: "TWO_BEDROOM", capacity: 2 };
+  return { unitType: "STUDIO", capacity: 1 };
+}
+
 async function main() {
   // Wipe in dependency order (safe on a freshly migrated DB too)
   await prisma.keyRequest.deleteMany();
@@ -69,11 +90,15 @@ async function main() {
   // Apartments: 1-23 in Mikontalo, 24-40 in Paawola
   const apartments: Array<{ id: number; number: number; blockId: number }> = [];
   for (let n = 1; n <= 23; n++) {
-    const apt = await prisma.apartment.create({ data: { number: n, blockId: mikontalo.id } });
+    const apt = await prisma.apartment.create({
+      data: { number: n, blockId: mikontalo.id, ...apartmentProfile(n) },
+    });
     apartments.push({ id: apt.id, number: apt.number, blockId: apt.blockId });
   }
   for (let n = 24; n <= 40; n++) {
-    const apt = await prisma.apartment.create({ data: { number: n, blockId: paawola.id } });
+    const apt = await prisma.apartment.create({
+      data: { number: n, blockId: paawola.id, ...apartmentProfile(n) },
+    });
     apartments.push({ id: apt.id, number: apt.number, blockId: apt.blockId });
   }
 

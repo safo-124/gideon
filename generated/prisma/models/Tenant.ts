@@ -462,10 +462,6 @@ export type TenantUncheckedUpdateManyWithoutApartmentNestedInput = {
   deleteMany?: Prisma.TenantScalarWhereInput | Prisma.TenantScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type TenantCreateNestedOneWithoutRequestsInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutRequestsInput, Prisma.TenantUncheckedCreateWithoutRequestsInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutRequestsInput

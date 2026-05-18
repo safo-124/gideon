@@ -1065,6 +1065,9 @@ export type BlockScalarFieldEnum = (typeof BlockScalarFieldEnum)[keyof typeof Bl
 export const ApartmentScalarFieldEnum = {
   id: 'id',
   number: 'number',
+  unitType: 'unitType',
+  capacity: 'capacity',
+  notes: 'notes',
   blockId: 'blockId'
 } as const
 
@@ -1204,6 +1207,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ApartmentUnitType'
+ */
+export type EnumApartmentUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApartmentUnitType'>
+    
+
+
+/**
+ * Reference to a field of type 'ApartmentUnitType[]'
+ */
+export type ListEnumApartmentUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApartmentUnitType[]'>
     
 
 
