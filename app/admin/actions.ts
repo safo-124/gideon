@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { randomInt } from "node:crypto";
 import bcrypt from "bcryptjs";
+
+function newCabinetCode() {
+  return Array.from({ length: 4 }, () => randomInt(10)).join("");
+}
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SETTING_KEYS } from "@/lib/settings";
@@ -364,14 +368,14 @@ export async function adminCancelRequest(formData: FormData) {
 export async function adminMarkReturned(formData: FormData) {
   await runAdminAction(formData, "/admin/requests", "Request marked as returned.", async () => {
     const id = idField(formData);
-    const req = await prisma.keyRequest.findUnique({ where: { id } });
+    const req = await prisma.keyRequest.findUnique({ where: { id }, include: { key: { include: { cabinet: true } } } });
     if (!req || req.status !== "PICKED_UP") {
       throw new ActionError("Only picked-up requests can be marked as returned.");
     }
-    await prisma.keyRequest.update({
-      where: { id },
-      data: { status: "RETURNED", returnedAt: new Date() },
-    });
+    await prisma.$transaction([
+      prisma.keyRequest.update({ where: { id }, data: { status: "RETURNED", returnedAt: new Date() } }),
+      ...(req.key ? [prisma.cabinet.update({ where: { id: req.key.cabinet.id }, data: { currentCode: newCabinetCode() } })] : []),
+    ]);
   });
 }
 
@@ -379,18 +383,22 @@ export async function adminMarkLost(formData: FormData) {
   await runAdminAction(formData, "/admin/requests", "Key marked as lost.", async () => {
     const id = idField(formData);
     const lostFeeCents = Number(field(formData, "lostFeeCents")) || 10000;
-    const req = await prisma.keyRequest.findUnique({ where: { id } });
+    const req = await prisma.keyRequest.findUnique({ where: { id }, include: { key: { include: { cabinet: true } } } });
     if (!req || req.status !== "PICKED_UP") {
       throw new ActionError("Only picked-up requests can be marked as lost.");
     }
-    await prisma.keyRequest.update({
-      where: { id },
-      data: { status: "RETURNED", returnedAt: new Date(), overdueFeeCents: lostFeeCents },
-    });
+    await prisma.$transaction([
+      prisma.keyRequest.update({ where: { id }, data: { status: "RETURNED", returnedAt: new Date(), overdueFeeCents: lostFeeCents } }),
+      // Rotate code even for lost keys — the old code must be invalidated
+      ...(req.key ? [prisma.cabinet.update({ where: { id: req.key.cabinet.id }, data: { currentCode: newCabinetCode() } })] : []),
+    ]);
   });
 }
 
 // ── Settings ──────────────────────────────────────────────────────────────────
+
+// Fee keys: admin inputs euros, stored as cents
+const CENTS_KEYS = new Set(["base_fee_cents", "overage_fee_cents_per_hour", "lost_key_fee_cents"]);
 
 export async function updateSettings(formData: FormData) {
   await requireAdmin();
@@ -404,7 +412,8 @@ export async function updateSettings(formData: FormData) {
       const params = new URLSearchParams({ error: `Invalid value for ${key.replace(/_/g, " ")}.` });
       redirect(`/admin/settings?${params}`);
     }
-    updates.push({ key, value: String(Math.round(num)) });
+    const stored = CENTS_KEYS.has(key) ? Math.round(num * 100) : Math.round(num);
+    updates.push({ key, value: String(stored) });
   }
 
   await prisma.$transaction(
