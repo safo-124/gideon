@@ -15,7 +15,7 @@ export default async function NewRequestPage() {
   const keyAvailable = !!(await findAvailableKey(tenant.apartmentId));
 
   return (
-    <main className="mx-auto w-full max-w-lg flex-1 px-6 py-12">
+    <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <Link
         className="mb-8 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
         href="/"
@@ -28,49 +28,50 @@ export default async function NewRequestPage() {
         A spare key will be placed in a cabinet for you to collect. You have 6 hours to return it.
       </p>
 
-      <div className="mt-8 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-        <div className="mb-6 space-y-2 text-sm">
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-500">Apartment</span>
-            <span className="font-medium">
+      <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="divide-y divide-zinc-100 px-5 py-4 dark:divide-zinc-800">
+          <div className="flex items-center justify-between gap-4 py-2.5">
+            <span className="text-sm text-zinc-500">Apartment</span>
+            <span className="text-sm font-medium">
               {tenant.apartment.block.name} / Apt {tenant.apartment.number}
             </span>
           </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-500">Address</span>
-            <span className="font-medium">
+          <div className="flex items-center justify-between gap-4 py-2.5">
+            <span className="text-sm text-zinc-500">Address</span>
+            <span className="text-right text-sm font-medium">
               {tenant.apartment.block.streetName} {tenant.apartment.block.zip}
             </span>
           </div>
-          <div className="h-px bg-zinc-100 dark:bg-zinc-800" />
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-500">Fee</span>
-            <span className="font-semibold text-zinc-950 dark:text-zinc-50">€20.00</span>
+          <div className="flex items-center justify-between gap-4 py-2.5">
+            <span className="text-sm text-zinc-500">Fee</span>
+            <span className="text-sm font-bold text-zinc-950 dark:text-zinc-50">€20.00</span>
           </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-500">Key hold</span>
-            <span className="font-medium">6 hours</span>
+          <div className="flex items-center justify-between gap-4 py-2.5">
+            <span className="text-sm text-zinc-500">Key hold</span>
+            <span className="text-sm font-medium">6 hours</span>
           </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-500">Overage</span>
-            <span className="font-medium">€5.00 / hr</span>
+          <div className="flex items-center justify-between gap-4 py-2.5">
+            <span className="text-sm text-zinc-500">Overage</span>
+            <span className="text-sm font-medium">€5.00 / hr</span>
           </div>
         </div>
 
-        {keyAvailable ? (
-          <form action={createSelfRequest}>
-            <SubmitButton
-              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed"
-              pendingText="Creating request…"
-            >
-              Continue to payment
-            </SubmitButton>
-          </form>
-        ) : (
-          <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/70 dark:bg-amber-950/30 dark:text-amber-300">
-            No spare key is available for your apartment right now. Please try again later.
-          </div>
-        )}
+        <div className="border-t border-zinc-100 p-5 dark:border-zinc-800">
+          {keyAvailable ? (
+            <form action={createSelfRequest}>
+              <SubmitButton
+                className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-teal-700 px-5 text-base font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50"
+                pendingText="Creating request…"
+              >
+                Continue to payment
+              </SubmitButton>
+            </form>
+          ) : (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3.5 text-sm text-amber-800 dark:border-amber-900/70 dark:bg-amber-950/30 dark:text-amber-300">
+              No spare key is available for your apartment right now. Please try again later.
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

@@ -97,7 +97,7 @@ export default async function TenantsPage({
         <p className="mb-3 text-xs font-medium text-zinc-500">Add tenant</p>
         <form
           action={createTenant}
-          className="grid gap-3 md:grid-cols-[1.2fr_1.4fr_1fr_1.2fr_auto] md:items-end"
+          className="grid gap-3 md:grid-cols-[1.2fr_1.4fr_1fr_1fr_1.2fr_auto] md:items-end"
         >
           <ReturnTo value={RETURN_TO} />
           <label>
@@ -107,6 +107,10 @@ export default async function TenantsPage({
           <label>
             <FieldLabel>Email</FieldLabel>
             <input className={inputClass} name="email" placeholder="jane@example.com" required type="email" />
+          </label>
+          <label>
+            <FieldLabel>Mobile</FieldLabel>
+            <input className={inputClass} name="phone" placeholder="+358 40 123 4567" type="tel" />
           </label>
           <label>
             <FieldLabel>Password</FieldLabel>
@@ -162,6 +166,11 @@ export default async function TenantsPage({
                       <a className="text-teal-700 hover:underline dark:text-teal-400" href={`mailto:${tenant.email}`}>
                         {tenant.email}
                       </a>
+                      {tenant.phone && (
+                        <a className="text-teal-700 hover:underline dark:text-teal-400" href={`tel:${tenant.phone}`}>
+                          {tenant.phone}
+                        </a>
+                      )}
                       <span>{tenant._count.requests} request{tenant._count.requests === 1 ? "" : "s"}</span>
                       <span>Joined {dateFormatter.format(tenant.createdAt)}</span>
                     </div>
@@ -171,7 +180,7 @@ export default async function TenantsPage({
                 {/* Edit form */}
                 <form
                   action={updateTenant}
-                  className="grid gap-3 border-t border-zinc-100 p-4 dark:border-zinc-800 md:grid-cols-[1.2fr_1.4fr_1fr_1.2fr_auto_auto] md:items-end"
+                  className="grid gap-3 border-t border-zinc-100 p-4 dark:border-zinc-800 md:grid-cols-[1.2fr_1.4fr_1fr_1fr_1.2fr_auto_auto] md:items-end"
                 >
                   <ReturnTo value={RETURN_TO} />
                   <input name="id" type="hidden" value={tenant.id} />
@@ -187,6 +196,16 @@ export default async function TenantsPage({
                       name="email"
                       required
                       type="email"
+                    />
+                  </label>
+                  <label>
+                    <FieldLabel>Mobile</FieldLabel>
+                    <input
+                      className={inputClass}
+                      defaultValue={tenant.phone ?? ""}
+                      name="phone"
+                      placeholder="Optional"
+                      type="tel"
                     />
                   </label>
                   <label>

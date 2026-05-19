@@ -19,7 +19,7 @@ export default async function PayPage({
   if (!request || request.status !== "AWAITING_PAYMENT") redirect("/");
 
   return (
-    <main className="mx-auto w-full max-w-lg flex-1 px-6 py-12">
+    <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <Link
         className="mb-8 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
         href="/"
@@ -32,17 +32,17 @@ export default async function PayPage({
         Spare key for {request.apartment.block.name} / Apt {request.apartment.number}
       </p>
 
-      <div className="mt-8 space-y-4">
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-          <div className="mb-5 text-xs font-medium uppercase tracking-wide text-zinc-500">
-            Card details
+      <div className="mt-8 space-y-3">
+        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="border-b border-zinc-100 px-5 py-3.5 dark:border-zinc-800">
+            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Card details</span>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 p-5">
             <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-zinc-500">Card number</span>
+              <span className="mb-1.5 block text-sm font-medium text-zinc-500">Card number</span>
               <input
-                className="h-10 w-full rounded-md border border-zinc-300 bg-zinc-50 px-3 text-sm text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+                className="h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
                 defaultValue="4242 4242 4242 4242"
                 disabled
                 type="text"
@@ -51,18 +51,18 @@ export default async function PayPage({
 
             <div className="grid grid-cols-2 gap-3">
               <label className="block">
-                <span className="mb-1.5 block text-xs font-medium text-zinc-500">Expiry</span>
+                <span className="mb-1.5 block text-sm font-medium text-zinc-500">Expiry</span>
                 <input
-                  className="h-10 w-full rounded-md border border-zinc-300 bg-zinc-50 px-3 text-sm text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+                  className="h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
                   defaultValue="12/26"
                   disabled
                   type="text"
                 />
               </label>
               <label className="block">
-                <span className="mb-1.5 block text-xs font-medium text-zinc-500">CVC</span>
+                <span className="mb-1.5 block text-sm font-medium text-zinc-500">CVC</span>
                 <input
-                  className="h-10 w-full rounded-md border border-zinc-300 bg-zinc-50 px-3 text-sm text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+                  className="h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
                   defaultValue="•••"
                   disabled
                   type="text"
@@ -71,18 +71,16 @@ export default async function PayPage({
             </div>
           </div>
 
-          <div className="mt-5 h-px bg-zinc-100 dark:bg-zinc-800" />
-
-          <div className="mt-4 flex items-center justify-between text-sm">
-            <span className="text-zinc-500">Total due</span>
-            <span className="text-base font-semibold">€20.00</span>
+          <div className="flex items-center justify-between border-t border-zinc-100 px-5 py-4 dark:border-zinc-800">
+            <span className="text-sm text-zinc-500">Total due</span>
+            <span className="text-xl font-bold">€20.00</span>
           </div>
         </div>
 
         <form action={payRequest}>
           <input name="id" type="hidden" value={request.id} />
           <SubmitButton
-            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-teal-700 px-5 text-base font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50"
             pendingText="Processing payment…"
           >
             Pay €20.00
@@ -92,7 +90,7 @@ export default async function PayPage({
         <form action={cancelRequest}>
           <input name="id" type="hidden" value={request.id} />
           <SubmitButton
-            className="inline-flex h-10 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-zinc-200 bg-white px-5 text-base font-medium text-zinc-600 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
             pendingText="Cancelling…"
           >
             Cancel request

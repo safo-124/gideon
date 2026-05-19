@@ -316,10 +316,12 @@ export async function createTenant(formData: FormData) {
   await runAdminAction(formData, "/admin/tenants", "Tenant created.", async () => {
     const password = requiredField(formData, "password", "Password");
     if (password.length < 8) throw new ActionError("Password must be at least 8 characters.");
+    const phone = field(formData, "phone") || null;
     await prisma.tenant.create({
       data: {
         fullName: requiredField(formData, "fullName", "Full name"),
         email: requiredField(formData, "email", "Email"),
+        phone,
         passwordHash: await bcrypt.hash(password, 10),
         apartmentId: idField(formData, "apartmentId"),
       },
@@ -333,6 +335,7 @@ export async function updateTenant(formData: FormData) {
     const data: Record<string, unknown> = {
       fullName: requiredField(formData, "fullName", "Full name"),
       email: requiredField(formData, "email", "Email"),
+      phone: field(formData, "phone") || null,
       apartmentId: idField(formData, "apartmentId"),
     };
     if (newPassword) {
