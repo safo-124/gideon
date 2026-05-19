@@ -58,6 +58,19 @@ export async function getRequestByDisputeToken(token: string) {
   });
 }
 
+export async function getPastRequests(tenantId: number) {
+  return prisma.keyRequest.findMany({
+    where: {
+      requesterId: tenantId,
+      status: { in: ["RETURNED", "CANCELLED", "DISPUTED"] },
+    },
+    include: { apartment: { include: { block: true } } },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+  });
+}
+
 export type ActiveRequest = Awaited<ReturnType<typeof getActiveRequest>>;
 export type RequestDetail = Awaited<ReturnType<typeof getRequest>>;
 export type ApartmentWithBlock = Awaited<ReturnType<typeof getApartmentByBlockAndNumber>>;
+export type PastRequest = Awaited<ReturnType<typeof getPastRequests>>[number];

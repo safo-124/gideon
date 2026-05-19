@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireTenant } from "@/lib/auth";
 import { findAvailableKey, getActiveRequest } from "../_lib/data";
 import { createSelfRequest } from "../actions";
+import { SubmitButton } from "@/app/components/submit-button";
 
 export const metadata = { title: "Request spare key — Key Recovery" };
 
@@ -58,12 +59,12 @@ export default async function NewRequestPage() {
 
         {keyAvailable ? (
           <form action={createSelfRequest}>
-            <button
-              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800"
-              type="submit"
+            <SubmitButton
+              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              pendingText="Creating request…"
             >
               Continue to payment
-            </button>
+            </SubmitButton>
           </form>
         ) : (
           <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/70 dark:bg-amber-950/30 dark:text-amber-300">

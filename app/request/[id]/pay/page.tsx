@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireTenant } from "@/lib/auth";
 import { getRequest } from "../../_lib/data";
 import { cancelRequest, payRequest } from "../../actions";
+import { SubmitButton } from "@/app/components/submit-button";
 
 export const metadata = { title: "Payment — Key Recovery" };
 
@@ -80,22 +81,22 @@ export default async function PayPage({
 
         <form action={payRequest}>
           <input name="id" type="hidden" value={request.id} />
-          <button
-            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800"
-            type="submit"
+          <SubmitButton
+            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            pendingText="Processing payment…"
           >
             Pay €20.00
-          </button>
+          </SubmitButton>
         </form>
 
         <form action={cancelRequest}>
           <input name="id" type="hidden" value={request.id} />
-          <button
-            className="inline-flex h-10 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900"
-            type="submit"
+          <SubmitButton
+            className="inline-flex h-10 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            pendingText="Cancelling…"
           >
             Cancel request
-          </button>
+          </SubmitButton>
         </form>
       </div>
     </main>
