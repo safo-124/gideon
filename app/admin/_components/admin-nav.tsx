@@ -15,6 +15,7 @@ type Counts = {
 const navItems = [
   { href: "/admin", label: "Overview", countKey: null },
   { href: "/admin/requests", label: "Requests", countKey: "requests" },
+  { href: "/admin/finance", label: "Finance", countKey: null },
   { href: "/admin/tenants", label: "Tenants", countKey: "tenants" },
   { href: "/admin/blocks", label: "Blocks", countKey: "blocks" },
   { href: "/admin/units", label: "Units", countKey: "units" },

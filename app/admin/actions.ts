@@ -24,6 +24,7 @@ const ADMIN_ROUTES = new Set([
   "/admin/cabinets",
   "/admin/keys",
   "/admin/requests",
+  "/admin/finance",
   "/admin/settings",
 ]);
 const KEY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";

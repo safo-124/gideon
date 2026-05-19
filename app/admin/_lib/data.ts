@@ -138,6 +138,76 @@ export async function getOverviewData() {
   return { blocks, units, tenants, cabinets, keys };
 }
 
+// ── Finance ───────────────────────────────────────────────────────────────────
+
+type DateFilter = { createdAt?: { gte: Date; lt: Date } };
+
+export async function getFinanceSummary(filter: DateFilter = {}) {
+  const now = new Date();
+
+  const [
+    collectedAgg,
+    collectedCount,
+    keysOutAgg,
+    keysOutCount,
+    pendingAgg,
+    pendingCount,
+    overdueRows,
+  ] = await Promise.all([
+    prisma.keyRequest.aggregate({
+      where: { status: { in: ["RETURNED", "DISPUTED"] }, ...filter },
+      _sum: { amountCents: true, overdueFeeCents: true },
+    }),
+    prisma.keyRequest.count({ where: { status: { in: ["RETURNED", "DISPUTED"] }, ...filter } }),
+    prisma.keyRequest.aggregate({
+      where: { status: { in: ["PAID", "PICKED_UP"] }, ...filter },
+      _sum: { amountCents: true },
+    }),
+    prisma.keyRequest.count({ where: { status: { in: ["PAID", "PICKED_UP"] }, ...filter } }),
+    prisma.keyRequest.aggregate({
+      where: { status: "AWAITING_PAYMENT", ...filter },
+      _sum: { amountCents: true },
+    }),
+    prisma.keyRequest.count({ where: { status: "AWAITING_PAYMENT", ...filter } }),
+    prisma.keyRequest.findMany({
+      where: { status: "PICKED_UP", dueAt: { lt: now }, ...filter },
+      select: { dueAt: true },
+    }),
+  ]);
+
+  const overdueEstimatedCents = overdueRows.reduce((sum, req) => {
+    if (!req.dueAt) return sum;
+    const hoursOver = (now.getTime() - req.dueAt.getTime()) / 3_600_000;
+    return sum + Math.ceil(hoursOver) * 500;
+  }, 0);
+
+  return {
+    collectedCents: (collectedAgg._sum.amountCents ?? 0) + (collectedAgg._sum.overdueFeeCents ?? 0),
+    overageCents: collectedAgg._sum.overdueFeeCents ?? 0,
+    collectedCount,
+    keysOutCents: keysOutAgg._sum.amountCents ?? 0,
+    keysOutCount,
+    pendingCents: pendingAgg._sum.amountCents ?? 0,
+    pendingCount,
+    overdueCount: overdueRows.length,
+    overdueEstimatedCents,
+  };
+}
+
+export async function getTransactions(filter: DateFilter = {}) {
+  return prisma.keyRequest.findMany({
+    where: { status: { in: ["PAID", "PICKED_UP", "RETURNED", "DISPUTED"] }, ...filter },
+    include: {
+      requester: { select: { fullName: true, email: true } },
+      apartment: { include: { block: true } },
+    },
+    orderBy: { paidAt: "desc" },
+    take: 200,
+  });
+}
+
+export type Transaction = Awaited<ReturnType<typeof getTransactions>>[number];
+
 export type BlockRow = Awaited<ReturnType<typeof getBlocks>>[number];
 export type UnitRow = Awaited<ReturnType<typeof getUnits>>[number];
 export type TenantRow = Awaited<ReturnType<typeof getTenants>>[number];
