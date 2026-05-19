@@ -28,10 +28,7 @@ export default async function LoginPage() {
         </div>
 
         <p className="mt-5 text-center text-sm text-zinc-500">
-          No account yet?{" "}
-          <a className="font-medium text-teal-700 hover:underline dark:text-teal-400" href="/signup">
-            Create one
-          </a>
+          No account? Check your email for an invite from your building manager.
         </p>
         <p className="mt-2 text-center text-sm text-zinc-400">
           Admin?{" "}

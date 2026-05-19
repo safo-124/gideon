@@ -67,6 +67,38 @@ function btn(href: string, text: string, danger = false) {
   return `<a href="${href}" style="display:inline-block;margin-top:8px;padding:10px 20px;background:${bg};color:#fff;font-size:14px;font-weight:600;text-decoration:none;border-radius:6px">${text}</a>`;
 }
 
+// ── Email: Tenant invite ──────────────────────────────────────────────────────
+
+export async function sendInviteEmail(
+  to: string,
+  data: { fullName: string; apartmentLabel: string; inviteUrl: string; expiresAt: Date },
+) {
+  const dtFmt = new Intl.DateTimeFormat("en-FI", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  await send(
+    to,
+    "You've been invited to Key Recovery",
+    layout(`
+      ${h1("Welcome to Key Recovery")}
+      ${p(`Hi ${data.fullName}, your building manager has created an account for you.`)}
+      ${infoBox([
+        ["Apartment", data.apartmentLabel],
+        ["Email", to],
+        ["Invite expires", dtFmt.format(data.expiresAt)],
+      ])}
+      ${p("Click the button below to set your password and activate your account. The link is valid for <strong>7 days</strong>.")}
+      ${btn(data.inviteUrl, "Activate my account")}
+      ${p(`<span style="font-size:12px;color:#a1a1aa">If you weren't expecting this, you can ignore this email.</span>`)}
+    `),
+  );
+}
+
 // ── Email: Key ready (SELF) ───────────────────────────────────────────────────
 
 export async function sendKeyReadyEmail(

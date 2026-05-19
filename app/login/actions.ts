@@ -18,6 +18,10 @@ export async function loginTenant(
   const tenant = await prisma.tenant.findUnique({ where: { email } });
   if (!tenant) return { error: "Invalid email or password" };
 
+  if (!tenant.passwordHash) {
+    return { error: "Your account isn't activated yet. Check your email for the invite link." };
+  }
+
   const ok = await bcrypt.compare(password, tenant.passwordHash);
   if (!ok) return { error: "Invalid email or password" };
 

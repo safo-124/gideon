@@ -1,4 +1,4 @@
-import { createTenant, deleteTenant, updateTenant } from "../../actions";
+import { createTenant, deleteTenant, resendInvite, updateTenant } from "../../actions";
 import {
   AddPanel,
   DeleteForm,
@@ -94,10 +94,11 @@ export default async function TenantsPage({
       </div>
 
       <AddPanel>
-        <p className="mb-3 text-xs font-medium text-zinc-500">Add tenant</p>
+        <p className="mb-1 text-xs font-medium text-zinc-500">Add tenant</p>
+        <p className="mb-3 text-xs text-zinc-400">An activation email will be sent automatically.</p>
         <form
           action={createTenant}
-          className="grid gap-3 md:grid-cols-[1.2fr_1.4fr_1fr_1fr_1.2fr_auto] md:items-end"
+          className="grid gap-3 md:grid-cols-[1.2fr_1.4fr_1fr_1.2fr_auto] md:items-end"
         >
           <ReturnTo value={RETURN_TO} />
           <label>
@@ -113,22 +114,11 @@ export default async function TenantsPage({
             <input className={inputClass} name="phone" placeholder="+358 40 123 4567" type="tel" />
           </label>
           <label>
-            <FieldLabel>Password</FieldLabel>
-            <input
-              className={inputClass}
-              minLength={8}
-              name="password"
-              placeholder="Min 8 chars"
-              required
-              type="password"
-            />
-          </label>
-          <label>
             <FieldLabel>Apartment</FieldLabel>
             <UnitSelect blocks={blocks} />
           </label>
           <button className={buttonClass} disabled={blocks.length === 0} type="submit">
-            Add
+            Send invite
           </button>
         </form>
       </AddPanel>
@@ -161,6 +151,9 @@ export default async function TenantsPage({
                       <Pill tone={occupancyTone}>
                         {tenant.apartment.block.name} / Apt {tenant.apartment.number}
                       </Pill>
+                      {!tenant.passwordHash && (
+                        <Pill tone="amber">Invite pending</Pill>
+                      )}
                     </div>
                     <div className="mt-0.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-zinc-500">
                       <a className="text-teal-700 hover:underline dark:text-teal-400" href={`mailto:${tenant.email}`}>
@@ -209,12 +202,12 @@ export default async function TenantsPage({
                     />
                   </label>
                   <label>
-                    <FieldLabel>New password</FieldLabel>
+                    <FieldLabel>{tenant.passwordHash ? "New password" : "Set password"}</FieldLabel>
                     <input
                       className={inputClass}
                       minLength={8}
                       name="password"
-                      placeholder="Leave blank to keep"
+                      placeholder={tenant.passwordHash ? "Leave blank to keep" : "Override invite"}
                       type="password"
                     />
                   </label>
@@ -232,6 +225,23 @@ export default async function TenantsPage({
                     returnTo={RETURN_TO}
                   />
                 </form>
+
+                {/* Resend invite — only for unactivated accounts */}
+                {!tenant.passwordHash && (
+                  <form
+                    action={resendInvite}
+                    className="border-t border-zinc-100 px-4 pb-4 dark:border-zinc-800"
+                  >
+                    <ReturnTo value={RETURN_TO} />
+                    <input name="id" type="hidden" value={tenant.id} />
+                    <button
+                      className="text-xs font-medium text-teal-700 hover:underline dark:text-teal-400"
+                      type="submit"
+                    >
+                      Resend invite email →
+                    </button>
+                  </form>
+                )}
               </div>
             );
           })}

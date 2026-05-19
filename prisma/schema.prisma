@@ -48,16 +48,18 @@ enum ApartmentUnitType {
 }
 
 model Tenant {
-  id            Int          @id @default(autoincrement())
-  fullName      String
-  email         String       @unique
-  phone         String?
-  passwordHash  String
-  profilePicUrl String?
-  apartment     Apartment    @relation(fields: [apartmentId], references: [id])
-  apartmentId   Int
-  requests      KeyRequest[]
-  createdAt     DateTime     @default(now())
+  id              Int          @id @default(autoincrement())
+  fullName        String
+  email           String       @unique
+  phone           String?
+  passwordHash    String?      // null until invite is accepted
+  inviteToken     String?      @unique
+  inviteExpiresAt DateTime?
+  profilePicUrl   String?
+  apartment       Apartment    @relation(fields: [apartmentId], references: [id])
+  apartmentId     Int
+  requests        KeyRequest[]
+  createdAt       DateTime     @default(now())
 }
 
 model Cabinet {

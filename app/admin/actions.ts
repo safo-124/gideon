@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { randomInt } from "node:crypto";
+import { randomBytes, randomInt } from "node:crypto";
 import bcrypt from "bcryptjs";
+import { sendInviteEmail } from "@/lib/email";
 
 function newCabinetCode() {
   return Array.from({ length: 4 }, () => randomInt(10)).join("");
@@ -312,20 +313,55 @@ export async function deleteKey(formData: FormData) {
 
 // ── Tenants ──────────────────────────────────────────────────────────────────
 
+const APP_URL = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
 export async function createTenant(formData: FormData) {
-  await runAdminAction(formData, "/admin/tenants", "Tenant created.", async () => {
-    const password = requiredField(formData, "password", "Password");
-    if (password.length < 8) throw new ActionError("Password must be at least 8 characters.");
+  await runAdminAction(formData, "/admin/tenants", "Invite sent.", async () => {
     const phone = field(formData, "phone") || null;
-    await prisma.tenant.create({
+    const inviteToken = randomBytes(32).toString("hex");
+    const inviteExpiresAt = new Date(Date.now() + INVITE_TTL_MS);
+
+    const tenant = await prisma.tenant.create({
       data: {
         fullName: requiredField(formData, "fullName", "Full name"),
         email: requiredField(formData, "email", "Email"),
         phone,
-        passwordHash: await bcrypt.hash(password, 10),
         apartmentId: idField(formData, "apartmentId"),
+        inviteToken,
+        inviteExpiresAt,
       },
+      include: { apartment: { include: { block: true } } },
     });
+
+    const inviteUrl = `${APP_URL}/signup/${inviteToken}`;
+    await sendInviteEmail(tenant.email, {
+      fullName: tenant.fullName,
+      apartmentLabel: `${tenant.apartment.block.name} / Apt ${tenant.apartment.number}`,
+      inviteUrl,
+      expiresAt: inviteExpiresAt,
+    }).catch(console.error);
+  });
+}
+
+export async function resendInvite(formData: FormData) {
+  await runAdminAction(formData, "/admin/tenants", "Invite resent.", async () => {
+    const inviteToken = randomBytes(32).toString("hex");
+    const inviteExpiresAt = new Date(Date.now() + INVITE_TTL_MS);
+
+    const tenant = await prisma.tenant.update({
+      where: { id: idField(formData) },
+      data: { inviteToken, inviteExpiresAt },
+      include: { apartment: { include: { block: true } } },
+    });
+
+    const inviteUrl = `${APP_URL}/signup/${inviteToken}`;
+    await sendInviteEmail(tenant.email, {
+      fullName: tenant.fullName,
+      apartmentLabel: `${tenant.apartment.block.name} / Apt ${tenant.apartment.number}`,
+      inviteUrl,
+      expiresAt: inviteExpiresAt,
+    }).catch(console.error);
   });
 }
 
