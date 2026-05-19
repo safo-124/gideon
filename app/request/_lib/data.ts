@@ -38,6 +38,20 @@ export async function getBlocks() {
   return prisma.block.findMany({ orderBy: { name: "asc" } });
 }
 
+export async function getBlocksForSignup() {
+  return prisma.block.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      apartments: {
+        select: { id: true, number: true },
+        orderBy: { number: "asc" },
+      },
+    },
+  });
+}
+
+export type BlocksForSignup = Awaited<ReturnType<typeof getBlocksForSignup>>;
+
 export async function getApartmentByBlockAndNumber(blockId: number, number: number) {
   return prisma.apartment.findFirst({
     where: { blockId, number },

@@ -13,7 +13,7 @@ export function proxy(request: NextRequest) {
 
   const isTenantLogin = pathname === "/login";
   const isAdminLogin = pathname === "/admin/login";
-  const isPublic = pathname.startsWith("/dispute");
+  const isPublic = pathname.startsWith("/dispute") || pathname === "/signup";
   const isAdminArea = pathname.startsWith("/admin") && !isAdminLogin;
   const isTenantArea = !pathname.startsWith("/admin") && !isTenantLogin && !isPublic;
 
