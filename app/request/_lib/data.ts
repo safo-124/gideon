@@ -4,7 +4,7 @@ export async function getActiveRequest(tenantId: number) {
   return prisma.keyRequest.findFirst({
     where: {
       requesterId: tenantId,
-      status: { notIn: ["RETURNED", "CANCELLED"] },
+      status: { notIn: ["RETURNED", "CANCELLED", "DISPUTED"] },
     },
     include: {
       key: { include: { cabinet: true } },
@@ -65,6 +65,16 @@ export async function getApartmentByBlockAndNumber(blockId: number, number: numb
 export async function getRequestByDisputeToken(token: string) {
   return prisma.keyRequest.findUnique({
     where: { disputeToken: token },
+    include: {
+      apartment: { include: { block: true } },
+      requester: { select: { fullName: true } },
+    },
+  });
+}
+
+export async function getRequestByApprovalToken(token: string) {
+  return prisma.keyRequest.findUnique({
+    where: { approvalToken: token },
     include: {
       apartment: { include: { block: true } },
       requester: { select: { fullName: true } },

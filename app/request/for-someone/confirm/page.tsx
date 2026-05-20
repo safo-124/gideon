@@ -163,9 +163,9 @@ export default async function ForSomeoneConfirmPage({
                 </label>
                 <SubmitButton
                   className="inline-flex h-11 w-full items-center justify-center rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50"
-                  pendingText="Creating request..."
+                  pendingText="Sending approval..."
                 >
-                  Accept and continue to payment
+                  Send approval request
                 </SubmitButton>
               </form>
             )}

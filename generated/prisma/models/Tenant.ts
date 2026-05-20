@@ -40,7 +40,10 @@ export type TenantMinAggregateOutputType = {
   id: number | null
   fullName: string | null
   email: string | null
+  phone: string | null
   passwordHash: string | null
+  inviteToken: string | null
+  inviteExpiresAt: Date | null
   profilePicUrl: string | null
   apartmentId: number | null
   createdAt: Date | null
@@ -50,7 +53,10 @@ export type TenantMaxAggregateOutputType = {
   id: number | null
   fullName: string | null
   email: string | null
+  phone: string | null
   passwordHash: string | null
+  inviteToken: string | null
+  inviteExpiresAt: Date | null
   profilePicUrl: string | null
   apartmentId: number | null
   createdAt: Date | null
@@ -60,7 +66,10 @@ export type TenantCountAggregateOutputType = {
   id: number
   fullName: number
   email: number
+  phone: number
   passwordHash: number
+  inviteToken: number
+  inviteExpiresAt: number
   profilePicUrl: number
   apartmentId: number
   createdAt: number
@@ -82,7 +91,10 @@ export type TenantMinAggregateInputType = {
   id?: true
   fullName?: true
   email?: true
+  phone?: true
   passwordHash?: true
+  inviteToken?: true
+  inviteExpiresAt?: true
   profilePicUrl?: true
   apartmentId?: true
   createdAt?: true
@@ -92,7 +104,10 @@ export type TenantMaxAggregateInputType = {
   id?: true
   fullName?: true
   email?: true
+  phone?: true
   passwordHash?: true
+  inviteToken?: true
+  inviteExpiresAt?: true
   profilePicUrl?: true
   apartmentId?: true
   createdAt?: true
@@ -102,7 +117,10 @@ export type TenantCountAggregateInputType = {
   id?: true
   fullName?: true
   email?: true
+  phone?: true
   passwordHash?: true
+  inviteToken?: true
+  inviteExpiresAt?: true
   profilePicUrl?: true
   apartmentId?: true
   createdAt?: true
@@ -199,7 +217,10 @@ export type TenantGroupByOutputType = {
   id: number
   fullName: string
   email: string
-  passwordHash: string
+  phone: string | null
+  passwordHash: string | null
+  inviteToken: string | null
+  inviteExpiresAt: Date | null
   profilePicUrl: string | null
   apartmentId: number
   createdAt: Date
@@ -232,7 +253,10 @@ export type TenantWhereInput = {
   id?: Prisma.IntFilter<"Tenant"> | number
   fullName?: Prisma.StringFilter<"Tenant"> | string
   email?: Prisma.StringFilter<"Tenant"> | string
-  passwordHash?: Prisma.StringFilter<"Tenant"> | string
+  phone?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  passwordHash?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  inviteToken?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  inviteExpiresAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   profilePicUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
   apartmentId?: Prisma.IntFilter<"Tenant"> | number
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -244,7 +268,10 @@ export type TenantOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  passwordHash?: Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   profilePicUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   apartmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -255,23 +282,29 @@ export type TenantOrderByWithRelationInput = {
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   email?: string
+  inviteToken?: string
   AND?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   OR?: Prisma.TenantWhereInput[]
   NOT?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   fullName?: Prisma.StringFilter<"Tenant"> | string
-  passwordHash?: Prisma.StringFilter<"Tenant"> | string
+  phone?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  passwordHash?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  inviteExpiresAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   profilePicUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
   apartmentId?: Prisma.IntFilter<"Tenant"> | number
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   apartment?: Prisma.XOR<Prisma.ApartmentScalarRelationFilter, Prisma.ApartmentWhereInput>
   requests?: Prisma.KeyRequestListRelationFilter
-}, "id" | "email">
+}, "id" | "email" | "inviteToken">
 
 export type TenantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  passwordHash?: Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  inviteExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   profilePicUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   apartmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -289,7 +322,10 @@ export type TenantScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Tenant"> | number
   fullName?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
   email?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
-  passwordHash?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
+  phone?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  passwordHash?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  inviteToken?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  inviteExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
   profilePicUrl?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   apartmentId?: Prisma.IntWithAggregatesFilter<"Tenant"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
@@ -298,7 +334,10 @@ export type TenantScalarWhereWithAggregatesInput = {
 export type TenantCreateInput = {
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   createdAt?: Date | string
   apartment: Prisma.ApartmentCreateNestedOneWithoutTenantsInput
@@ -309,7 +348,10 @@ export type TenantUncheckedCreateInput = {
   id?: number
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   apartmentId: number
   createdAt?: Date | string
@@ -319,7 +361,10 @@ export type TenantUncheckedCreateInput = {
 export type TenantUpdateInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apartment?: Prisma.ApartmentUpdateOneRequiredWithoutTenantsNestedInput
@@ -330,7 +375,10 @@ export type TenantUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apartmentId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -341,7 +389,10 @@ export type TenantCreateManyInput = {
   id?: number
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   apartmentId: number
   createdAt?: Date | string
@@ -350,7 +401,10 @@ export type TenantCreateManyInput = {
 export type TenantUpdateManyMutationInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -359,7 +413,10 @@ export type TenantUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apartmentId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -379,7 +436,10 @@ export type TenantCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  inviteToken?: Prisma.SortOrder
+  inviteExpiresAt?: Prisma.SortOrder
   profilePicUrl?: Prisma.SortOrder
   apartmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -394,7 +454,10 @@ export type TenantMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  inviteToken?: Prisma.SortOrder
+  inviteExpiresAt?: Prisma.SortOrder
   profilePicUrl?: Prisma.SortOrder
   apartmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -404,7 +467,10 @@ export type TenantMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  inviteToken?: Prisma.SortOrder
+  inviteExpiresAt?: Prisma.SortOrder
   profilePicUrl?: Prisma.SortOrder
   apartmentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -462,6 +528,10 @@ export type TenantUncheckedUpdateManyWithoutApartmentNestedInput = {
   deleteMany?: Prisma.TenantScalarWhereInput | Prisma.TenantScalarWhereInput[]
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type TenantCreateNestedOneWithoutRequestsInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutRequestsInput, Prisma.TenantUncheckedCreateWithoutRequestsInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutRequestsInput
@@ -479,7 +549,10 @@ export type TenantUpdateOneRequiredWithoutRequestsNestedInput = {
 export type TenantCreateWithoutApartmentInput = {
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   createdAt?: Date | string
   requests?: Prisma.KeyRequestCreateNestedManyWithoutRequesterInput
@@ -489,7 +562,10 @@ export type TenantUncheckedCreateWithoutApartmentInput = {
   id?: number
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   createdAt?: Date | string
   requests?: Prisma.KeyRequestUncheckedCreateNestedManyWithoutRequesterInput
@@ -528,7 +604,10 @@ export type TenantScalarWhereInput = {
   id?: Prisma.IntFilter<"Tenant"> | number
   fullName?: Prisma.StringFilter<"Tenant"> | string
   email?: Prisma.StringFilter<"Tenant"> | string
-  passwordHash?: Prisma.StringFilter<"Tenant"> | string
+  phone?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  passwordHash?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  inviteToken?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  inviteExpiresAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   profilePicUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
   apartmentId?: Prisma.IntFilter<"Tenant"> | number
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -537,7 +616,10 @@ export type TenantScalarWhereInput = {
 export type TenantCreateWithoutRequestsInput = {
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   createdAt?: Date | string
   apartment: Prisma.ApartmentCreateNestedOneWithoutTenantsInput
@@ -547,7 +629,10 @@ export type TenantUncheckedCreateWithoutRequestsInput = {
   id?: number
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   apartmentId: number
   createdAt?: Date | string
@@ -572,7 +657,10 @@ export type TenantUpdateToOneWithWhereWithoutRequestsInput = {
 export type TenantUpdateWithoutRequestsInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apartment?: Prisma.ApartmentUpdateOneRequiredWithoutTenantsNestedInput
@@ -582,7 +670,10 @@ export type TenantUncheckedUpdateWithoutRequestsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apartmentId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -592,7 +683,10 @@ export type TenantCreateManyApartmentInput = {
   id?: number
   fullName: string
   email: string
-  passwordHash: string
+  phone?: string | null
+  passwordHash?: string | null
+  inviteToken?: string | null
+  inviteExpiresAt?: Date | string | null
   profilePicUrl?: string | null
   createdAt?: Date | string
 }
@@ -600,7 +694,10 @@ export type TenantCreateManyApartmentInput = {
 export type TenantUpdateWithoutApartmentInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requests?: Prisma.KeyRequestUpdateManyWithoutRequesterNestedInput
@@ -610,7 +707,10 @@ export type TenantUncheckedUpdateWithoutApartmentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requests?: Prisma.KeyRequestUncheckedUpdateManyWithoutRequesterNestedInput
@@ -620,7 +720,10 @@ export type TenantUncheckedUpdateManyWithoutApartmentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inviteExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profilePicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -660,7 +763,10 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   id?: boolean
   fullName?: boolean
   email?: boolean
+  phone?: boolean
   passwordHash?: boolean
+  inviteToken?: boolean
+  inviteExpiresAt?: boolean
   profilePicUrl?: boolean
   apartmentId?: boolean
   createdAt?: boolean
@@ -673,7 +779,10 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   fullName?: boolean
   email?: boolean
+  phone?: boolean
   passwordHash?: boolean
+  inviteToken?: boolean
+  inviteExpiresAt?: boolean
   profilePicUrl?: boolean
   apartmentId?: boolean
   createdAt?: boolean
@@ -684,7 +793,10 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   fullName?: boolean
   email?: boolean
+  phone?: boolean
   passwordHash?: boolean
+  inviteToken?: boolean
+  inviteExpiresAt?: boolean
   profilePicUrl?: boolean
   apartmentId?: boolean
   createdAt?: boolean
@@ -695,13 +807,16 @@ export type TenantSelectScalar = {
   id?: boolean
   fullName?: boolean
   email?: boolean
+  phone?: boolean
   passwordHash?: boolean
+  inviteToken?: boolean
+  inviteExpiresAt?: boolean
   profilePicUrl?: boolean
   apartmentId?: boolean
   createdAt?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "email" | "passwordHash" | "profilePicUrl" | "apartmentId" | "createdAt", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "email" | "phone" | "passwordHash" | "inviteToken" | "inviteExpiresAt" | "profilePicUrl" | "apartmentId" | "createdAt", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   apartment?: boolean | Prisma.ApartmentDefaultArgs<ExtArgs>
   requests?: boolean | Prisma.Tenant$requestsArgs<ExtArgs>
@@ -724,7 +839,10 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     id: number
     fullName: string
     email: string
-    passwordHash: string
+    phone: string | null
+    passwordHash: string | null
+    inviteToken: string | null
+    inviteExpiresAt: Date | null
     profilePicUrl: string | null
     apartmentId: number
     createdAt: Date
@@ -1156,7 +1274,10 @@ export interface TenantFieldRefs {
   readonly id: Prisma.FieldRef<"Tenant", 'Int'>
   readonly fullName: Prisma.FieldRef<"Tenant", 'String'>
   readonly email: Prisma.FieldRef<"Tenant", 'String'>
+  readonly phone: Prisma.FieldRef<"Tenant", 'String'>
   readonly passwordHash: Prisma.FieldRef<"Tenant", 'String'>
+  readonly inviteToken: Prisma.FieldRef<"Tenant", 'String'>
+  readonly inviteExpiresAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly profilePicUrl: Prisma.FieldRef<"Tenant", 'String'>
   readonly apartmentId: Prisma.FieldRef<"Tenant", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Tenant", 'DateTime'>

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { adminCancelRequest, adminMarkLost, adminMarkReturned } from "../../actions";
 import {
-  DeleteForm,
   EmptyState,
   FieldLabel,
   Flash,
@@ -193,7 +192,8 @@ export default async function RequestsPage({
                   </div>
                 </div>
 
-                {(req.status === "AWAITING_PAYMENT" ||
+                {(req.status === "PENDING_AUTH" ||
+                  req.status === "AWAITING_PAYMENT" ||
                   req.status === "PAID" ||
                   req.status === "PICKED_UP") && (
                   <div className="mt-3 flex flex-wrap gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-800">
@@ -216,7 +216,7 @@ export default async function RequestsPage({
                         </form>
                       </>
                     )}
-                    {(req.status === "AWAITING_PAYMENT" || req.status === "PAID") && (
+                    {(req.status === "PENDING_AUTH" || req.status === "AWAITING_PAYMENT" || req.status === "PAID") && (
                       <form action={adminCancelRequest}>
                         <ReturnTo value={RETURN_TO} />
                         <input name="id" type="hidden" value={req.id} />

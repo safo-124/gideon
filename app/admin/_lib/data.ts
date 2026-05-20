@@ -17,7 +17,7 @@ export async function getAdminCounts() {
     prisma.cabinet.count(),
     prisma.key.count(),
     prisma.tenant.count(),
-    prisma.keyRequest.count({ where: { status: { in: ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] } } }),
+    prisma.keyRequest.count({ where: { status: { in: ["PENDING_AUTH", "AWAITING_PAYMENT", "PAID", "PICKED_UP"] } } }),
   ]);
 
   return { blocks, units, cabinets, keys, tenants, requests };
@@ -81,7 +81,7 @@ export async function getRequests(statusFilter?: string) {
 
   if (statusFilter === "active") {
     return prisma.keyRequest.findMany({
-      where: { status: { in: ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] } },
+      where: { status: { in: ["PENDING_AUTH", "AWAITING_PAYMENT", "PAID", "PICKED_UP"] } },
       include: { requester: { select: { id: true, fullName: true, email: true } }, apartment: { include: { block: true } }, key: { include: { cabinet: true } } },
       orderBy: { createdAt: "desc" },
     });
@@ -110,7 +110,7 @@ export async function getRequestStats() {
   const now = new Date();
   const [total, active, overdue, disputed] = await Promise.all([
     prisma.keyRequest.count(),
-    prisma.keyRequest.count({ where: { status: { in: ["AWAITING_PAYMENT", "PAID", "PICKED_UP"] } } }),
+    prisma.keyRequest.count({ where: { status: { in: ["PENDING_AUTH", "AWAITING_PAYMENT", "PAID", "PICKED_UP"] } } }),
     prisma.keyRequest.count({ where: { status: "PICKED_UP", dueAt: { lt: now } } }),
     prisma.keyRequest.count({ where: { status: "DISPUTED" } }),
   ]);

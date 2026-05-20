@@ -35,6 +35,13 @@ function overdueHours(dueAt: Date, now: Date) {
   return Math.max(0, (now.getTime() - dueAt.getTime()) / 3_600_000);
 }
 
+const REQUEST_REASON_LABELS: Record<string, string> = {
+  caregiver: "Family or caregiver access",
+  locked_out: "Resident is locked out",
+  other: "Other approved reason",
+  resident_asked: "Resident asked me to help",
+};
+
 function activeStatusCopy(request: ActiveRequestRecord | null, now: Date) {
   if (!request) {
     return {
@@ -42,6 +49,15 @@ function activeStatusCopy(request: ActiveRequestRecord | null, now: Date) {
       title: "Request access without waiting at the office.",
       detail: "Start a spare key handoff for your apartment or help another resident with approval.",
       tone: "teal",
+    };
+  }
+
+  if (request.status === "PENDING_AUTH") {
+    return {
+      label: "Resident approval needed",
+      title: "Waiting for the resident to approve.",
+      detail: "We sent the resident an approval link and 6-digit code. Payment opens after they approve.",
+      tone: "amber",
     };
   }
 
@@ -260,6 +276,56 @@ function InfoPanel({
 function RequestPanel({ request, now }: { request: ActiveRequestRecord; now: Date }) {
   const { id, status, apartment, key } = request;
   const aptLabel = `${apartment.block.name} / Apt ${apartment.number}`;
+  const reason = request.requestReason ? REQUEST_REASON_LABELS[request.requestReason] ?? request.requestReason : null;
+
+  if (status === "PENDING_AUTH") {
+    return (
+      <section className="tenant-dashboard-card overflow-hidden rounded-lg border border-amber-200 bg-white shadow-sm dark:border-amber-900/60 dark:bg-zinc-950">
+        <div className="flex items-center justify-between gap-4 border-b border-amber-100 bg-amber-50 px-5 py-3 dark:border-amber-900/50 dark:bg-amber-950/20">
+          <span className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Waiting for resident approval</span>
+          {request.approvalExpiresAt && (
+            <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-zinc-900 dark:text-amber-300">
+              Expires {dtFmt.format(request.approvalExpiresAt)}
+            </span>
+          )}
+        </div>
+        <div className="p-5 sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-950 dark:text-zinc-50">{aptLabel}</h2>
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                The resident must approve with their 6-digit code before you can pay or receive a cabinet code.
+              </p>
+            </div>
+            <IconShell tone="amber">
+              <ShieldIcon />
+            </IconShell>
+          </div>
+
+          <div className="mt-5 grid gap-3 rounded-lg border border-zinc-200 px-4 py-3 text-sm dark:border-zinc-800 sm:grid-cols-2">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-wide text-zinc-400">Reason</div>
+              <div className="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{reason ?? "Resident-assisted access"}</div>
+            </div>
+            <div>
+              <div className="text-xs font-medium uppercase tracking-wide text-zinc-400">Payment</div>
+              <div className="mt-1 font-medium text-zinc-900 dark:text-zinc-100">Locked until approved</div>
+            </div>
+          </div>
+
+          <form action={cancelRequest} className="mt-5">
+            <input name="id" type="hidden" value={id} />
+            <SubmitButton
+              className="inline-flex h-11 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900"
+              pendingText="Cancelling..."
+            >
+              Cancel request
+            </SubmitButton>
+          </form>
+        </div>
+      </section>
+    );
+  }
 
   if (status === "AWAITING_PAYMENT") {
     return (

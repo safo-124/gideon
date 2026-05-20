@@ -33,6 +33,7 @@ export type KeyRequestAvgAggregateOutputType = {
   keyId: number | null
   amountCents: number | null
   overdueFeeCents: number | null
+  approvalCodeAttempts: number | null
 }
 
 export type KeyRequestSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type KeyRequestSumAggregateOutputType = {
   keyId: number | null
   amountCents: number | null
   overdueFeeCents: number | null
+  approvalCodeAttempts: number | null
 }
 
 export type KeyRequestMinAggregateOutputType = {
@@ -53,6 +55,13 @@ export type KeyRequestMinAggregateOutputType = {
   status: $Enums.RequestStatus | null
   amountCents: number | null
   overdueFeeCents: number | null
+  requestReason: string | null
+  approvalToken: string | null
+  approvalCodeHash: string | null
+  approvalCodeAttempts: number | null
+  approvalExpiresAt: Date | null
+  approvalRespondedAt: Date | null
+  approvalDeniedAt: Date | null
   disputeToken: string | null
   disputeWindowEndsAt: Date | null
   paidAt: Date | null
@@ -74,6 +83,13 @@ export type KeyRequestMaxAggregateOutputType = {
   status: $Enums.RequestStatus | null
   amountCents: number | null
   overdueFeeCents: number | null
+  requestReason: string | null
+  approvalToken: string | null
+  approvalCodeHash: string | null
+  approvalCodeAttempts: number | null
+  approvalExpiresAt: Date | null
+  approvalRespondedAt: Date | null
+  approvalDeniedAt: Date | null
   disputeToken: string | null
   disputeWindowEndsAt: Date | null
   paidAt: Date | null
@@ -95,6 +111,13 @@ export type KeyRequestCountAggregateOutputType = {
   status: number
   amountCents: number
   overdueFeeCents: number
+  requestReason: number
+  approvalToken: number
+  approvalCodeHash: number
+  approvalCodeAttempts: number
+  approvalExpiresAt: number
+  approvalRespondedAt: number
+  approvalDeniedAt: number
   disputeToken: number
   disputeWindowEndsAt: number
   paidAt: number
@@ -116,6 +139,7 @@ export type KeyRequestAvgAggregateInputType = {
   keyId?: true
   amountCents?: true
   overdueFeeCents?: true
+  approvalCodeAttempts?: true
 }
 
 export type KeyRequestSumAggregateInputType = {
@@ -125,6 +149,7 @@ export type KeyRequestSumAggregateInputType = {
   keyId?: true
   amountCents?: true
   overdueFeeCents?: true
+  approvalCodeAttempts?: true
 }
 
 export type KeyRequestMinAggregateInputType = {
@@ -136,6 +161,13 @@ export type KeyRequestMinAggregateInputType = {
   status?: true
   amountCents?: true
   overdueFeeCents?: true
+  requestReason?: true
+  approvalToken?: true
+  approvalCodeHash?: true
+  approvalCodeAttempts?: true
+  approvalExpiresAt?: true
+  approvalRespondedAt?: true
+  approvalDeniedAt?: true
   disputeToken?: true
   disputeWindowEndsAt?: true
   paidAt?: true
@@ -157,6 +189,13 @@ export type KeyRequestMaxAggregateInputType = {
   status?: true
   amountCents?: true
   overdueFeeCents?: true
+  requestReason?: true
+  approvalToken?: true
+  approvalCodeHash?: true
+  approvalCodeAttempts?: true
+  approvalExpiresAt?: true
+  approvalRespondedAt?: true
+  approvalDeniedAt?: true
   disputeToken?: true
   disputeWindowEndsAt?: true
   paidAt?: true
@@ -178,6 +217,13 @@ export type KeyRequestCountAggregateInputType = {
   status?: true
   amountCents?: true
   overdueFeeCents?: true
+  requestReason?: true
+  approvalToken?: true
+  approvalCodeHash?: true
+  approvalCodeAttempts?: true
+  approvalExpiresAt?: true
+  approvalRespondedAt?: true
+  approvalDeniedAt?: true
   disputeToken?: true
   disputeWindowEndsAt?: true
   paidAt?: true
@@ -286,6 +332,13 @@ export type KeyRequestGroupByOutputType = {
   status: $Enums.RequestStatus
   amountCents: number
   overdueFeeCents: number
+  requestReason: string | null
+  approvalToken: string | null
+  approvalCodeHash: string | null
+  approvalCodeAttempts: number
+  approvalExpiresAt: Date | null
+  approvalRespondedAt: Date | null
+  approvalDeniedAt: Date | null
   disputeToken: string | null
   disputeWindowEndsAt: Date | null
   paidAt: Date | null
@@ -330,6 +383,13 @@ export type KeyRequestWhereInput = {
   status?: Prisma.EnumRequestStatusFilter<"KeyRequest"> | $Enums.RequestStatus
   amountCents?: Prisma.IntFilter<"KeyRequest"> | number
   overdueFeeCents?: Prisma.IntFilter<"KeyRequest"> | number
+  requestReason?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalToken?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalCodeHash?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalCodeAttempts?: Prisma.IntFilter<"KeyRequest"> | number
+  approvalExpiresAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
+  approvalRespondedAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
+  approvalDeniedAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
   disputeToken?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
   disputeWindowEndsAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
@@ -354,6 +414,13 @@ export type KeyRequestOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   overdueFeeCents?: Prisma.SortOrder
+  requestReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalCodeAttempts?: Prisma.SortOrder
+  approvalExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalRespondedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalDeniedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   disputeToken?: Prisma.SortOrderInput | Prisma.SortOrder
   disputeWindowEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -371,6 +438,7 @@ export type KeyRequestOrderByWithRelationInput = {
 
 export type KeyRequestWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  approvalToken?: string
   disputeToken?: string
   AND?: Prisma.KeyRequestWhereInput | Prisma.KeyRequestWhereInput[]
   OR?: Prisma.KeyRequestWhereInput[]
@@ -382,6 +450,12 @@ export type KeyRequestWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumRequestStatusFilter<"KeyRequest"> | $Enums.RequestStatus
   amountCents?: Prisma.IntFilter<"KeyRequest"> | number
   overdueFeeCents?: Prisma.IntFilter<"KeyRequest"> | number
+  requestReason?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalCodeHash?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalCodeAttempts?: Prisma.IntFilter<"KeyRequest"> | number
+  approvalExpiresAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
+  approvalRespondedAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
+  approvalDeniedAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
   disputeWindowEndsAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
   pickedAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
@@ -394,7 +468,7 @@ export type KeyRequestWhereUniqueInput = Prisma.AtLeast<{
   requester?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   apartment?: Prisma.XOR<Prisma.ApartmentScalarRelationFilter, Prisma.ApartmentWhereInput>
   key?: Prisma.XOR<Prisma.KeyNullableScalarRelationFilter, Prisma.KeyWhereInput> | null
-}, "id" | "disputeToken">
+}, "id" | "approvalToken" | "disputeToken">
 
 export type KeyRequestOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -405,6 +479,13 @@ export type KeyRequestOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   overdueFeeCents?: Prisma.SortOrder
+  requestReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalCodeAttempts?: Prisma.SortOrder
+  approvalExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalRespondedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvalDeniedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   disputeToken?: Prisma.SortOrderInput | Prisma.SortOrder
   disputeWindowEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -434,6 +515,13 @@ export type KeyRequestScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumRequestStatusWithAggregatesFilter<"KeyRequest"> | $Enums.RequestStatus
   amountCents?: Prisma.IntWithAggregatesFilter<"KeyRequest"> | number
   overdueFeeCents?: Prisma.IntWithAggregatesFilter<"KeyRequest"> | number
+  requestReason?: Prisma.StringNullableWithAggregatesFilter<"KeyRequest"> | string | null
+  approvalToken?: Prisma.StringNullableWithAggregatesFilter<"KeyRequest"> | string | null
+  approvalCodeHash?: Prisma.StringNullableWithAggregatesFilter<"KeyRequest"> | string | null
+  approvalCodeAttempts?: Prisma.IntWithAggregatesFilter<"KeyRequest"> | number
+  approvalExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KeyRequest"> | Date | string | null
+  approvalRespondedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KeyRequest"> | Date | string | null
+  approvalDeniedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KeyRequest"> | Date | string | null
   disputeToken?: Prisma.StringNullableWithAggregatesFilter<"KeyRequest"> | string | null
   disputeWindowEndsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KeyRequest"> | Date | string | null
   paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KeyRequest"> | Date | string | null
@@ -451,6 +539,13 @@ export type KeyRequestCreateInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -475,6 +570,13 @@ export type KeyRequestUncheckedCreateInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -492,6 +594,13 @@ export type KeyRequestUpdateInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -516,6 +625,13 @@ export type KeyRequestUncheckedUpdateInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -537,6 +653,13 @@ export type KeyRequestCreateManyInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -554,6 +677,13 @@ export type KeyRequestUpdateManyMutationInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -575,6 +705,13 @@ export type KeyRequestUncheckedUpdateManyInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -606,6 +743,13 @@ export type KeyRequestCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   overdueFeeCents?: Prisma.SortOrder
+  requestReason?: Prisma.SortOrder
+  approvalToken?: Prisma.SortOrder
+  approvalCodeHash?: Prisma.SortOrder
+  approvalCodeAttempts?: Prisma.SortOrder
+  approvalExpiresAt?: Prisma.SortOrder
+  approvalRespondedAt?: Prisma.SortOrder
+  approvalDeniedAt?: Prisma.SortOrder
   disputeToken?: Prisma.SortOrder
   disputeWindowEndsAt?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
@@ -625,6 +769,7 @@ export type KeyRequestAvgOrderByAggregateInput = {
   keyId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   overdueFeeCents?: Prisma.SortOrder
+  approvalCodeAttempts?: Prisma.SortOrder
 }
 
 export type KeyRequestMaxOrderByAggregateInput = {
@@ -636,6 +781,13 @@ export type KeyRequestMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   overdueFeeCents?: Prisma.SortOrder
+  requestReason?: Prisma.SortOrder
+  approvalToken?: Prisma.SortOrder
+  approvalCodeHash?: Prisma.SortOrder
+  approvalCodeAttempts?: Prisma.SortOrder
+  approvalExpiresAt?: Prisma.SortOrder
+  approvalRespondedAt?: Prisma.SortOrder
+  approvalDeniedAt?: Prisma.SortOrder
   disputeToken?: Prisma.SortOrder
   disputeWindowEndsAt?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
@@ -657,6 +809,13 @@ export type KeyRequestMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   overdueFeeCents?: Prisma.SortOrder
+  requestReason?: Prisma.SortOrder
+  approvalToken?: Prisma.SortOrder
+  approvalCodeHash?: Prisma.SortOrder
+  approvalCodeAttempts?: Prisma.SortOrder
+  approvalExpiresAt?: Prisma.SortOrder
+  approvalRespondedAt?: Prisma.SortOrder
+  approvalDeniedAt?: Prisma.SortOrder
   disputeToken?: Prisma.SortOrder
   disputeWindowEndsAt?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
@@ -676,6 +835,7 @@ export type KeyRequestSumOrderByAggregateInput = {
   keyId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   overdueFeeCents?: Prisma.SortOrder
+  approvalCodeAttempts?: Prisma.SortOrder
 }
 
 export type KeyRequestCreateNestedManyWithoutApartmentInput = {
@@ -812,10 +972,6 @@ export type EnumRequestStatusFieldUpdateOperationsInput = {
   set?: $Enums.RequestStatus
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -829,6 +985,13 @@ export type KeyRequestCreateWithoutApartmentInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -851,6 +1014,13 @@ export type KeyRequestUncheckedCreateWithoutApartmentInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -901,6 +1071,13 @@ export type KeyRequestScalarWhereInput = {
   status?: Prisma.EnumRequestStatusFilter<"KeyRequest"> | $Enums.RequestStatus
   amountCents?: Prisma.IntFilter<"KeyRequest"> | number
   overdueFeeCents?: Prisma.IntFilter<"KeyRequest"> | number
+  requestReason?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalToken?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalCodeHash?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
+  approvalCodeAttempts?: Prisma.IntFilter<"KeyRequest"> | number
+  approvalExpiresAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
+  approvalRespondedAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
+  approvalDeniedAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
   disputeToken?: Prisma.StringNullableFilter<"KeyRequest"> | string | null
   disputeWindowEndsAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"KeyRequest"> | Date | string | null
@@ -918,6 +1095,13 @@ export type KeyRequestCreateWithoutRequesterInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -940,6 +1124,13 @@ export type KeyRequestUncheckedCreateWithoutRequesterInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -983,6 +1174,13 @@ export type KeyRequestCreateWithoutKeyInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -1005,6 +1203,13 @@ export type KeyRequestUncheckedCreateWithoutKeyInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -1051,6 +1256,13 @@ export type KeyRequestCreateManyApartmentInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -1068,6 +1280,13 @@ export type KeyRequestUpdateWithoutApartmentInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1090,6 +1309,13 @@ export type KeyRequestUncheckedUpdateWithoutApartmentInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1110,6 +1336,13 @@ export type KeyRequestUncheckedUpdateManyWithoutApartmentInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1130,6 +1363,13 @@ export type KeyRequestCreateManyRequesterInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -1147,6 +1387,13 @@ export type KeyRequestUpdateWithoutRequesterInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1169,6 +1416,13 @@ export type KeyRequestUncheckedUpdateWithoutRequesterInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1189,6 +1443,13 @@ export type KeyRequestUncheckedUpdateManyWithoutRequesterInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1209,6 +1470,13 @@ export type KeyRequestCreateManyKeyInput = {
   status?: $Enums.RequestStatus
   amountCents?: number
   overdueFeeCents?: number
+  requestReason?: string | null
+  approvalToken?: string | null
+  approvalCodeHash?: string | null
+  approvalCodeAttempts?: number
+  approvalExpiresAt?: Date | string | null
+  approvalRespondedAt?: Date | string | null
+  approvalDeniedAt?: Date | string | null
   disputeToken?: string | null
   disputeWindowEndsAt?: Date | string | null
   paidAt?: Date | string | null
@@ -1226,6 +1494,13 @@ export type KeyRequestUpdateWithoutKeyInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1248,6 +1523,13 @@ export type KeyRequestUncheckedUpdateWithoutKeyInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1268,6 +1550,13 @@ export type KeyRequestUncheckedUpdateManyWithoutKeyInput = {
   status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   overdueFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  requestReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalCodeAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalRespondedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvalDeniedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disputeToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   disputeWindowEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1291,6 +1580,13 @@ export type KeyRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   status?: boolean
   amountCents?: boolean
   overdueFeeCents?: boolean
+  requestReason?: boolean
+  approvalToken?: boolean
+  approvalCodeHash?: boolean
+  approvalCodeAttempts?: boolean
+  approvalExpiresAt?: boolean
+  approvalRespondedAt?: boolean
+  approvalDeniedAt?: boolean
   disputeToken?: boolean
   disputeWindowEndsAt?: boolean
   paidAt?: boolean
@@ -1315,6 +1611,13 @@ export type KeyRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   status?: boolean
   amountCents?: boolean
   overdueFeeCents?: boolean
+  requestReason?: boolean
+  approvalToken?: boolean
+  approvalCodeHash?: boolean
+  approvalCodeAttempts?: boolean
+  approvalExpiresAt?: boolean
+  approvalRespondedAt?: boolean
+  approvalDeniedAt?: boolean
   disputeToken?: boolean
   disputeWindowEndsAt?: boolean
   paidAt?: boolean
@@ -1339,6 +1642,13 @@ export type KeyRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   status?: boolean
   amountCents?: boolean
   overdueFeeCents?: boolean
+  requestReason?: boolean
+  approvalToken?: boolean
+  approvalCodeHash?: boolean
+  approvalCodeAttempts?: boolean
+  approvalExpiresAt?: boolean
+  approvalRespondedAt?: boolean
+  approvalDeniedAt?: boolean
   disputeToken?: boolean
   disputeWindowEndsAt?: boolean
   paidAt?: boolean
@@ -1363,6 +1673,13 @@ export type KeyRequestSelectScalar = {
   status?: boolean
   amountCents?: boolean
   overdueFeeCents?: boolean
+  requestReason?: boolean
+  approvalToken?: boolean
+  approvalCodeHash?: boolean
+  approvalCodeAttempts?: boolean
+  approvalExpiresAt?: boolean
+  approvalRespondedAt?: boolean
+  approvalDeniedAt?: boolean
   disputeToken?: boolean
   disputeWindowEndsAt?: boolean
   paidAt?: boolean
@@ -1375,7 +1692,7 @@ export type KeyRequestSelectScalar = {
   updatedAt?: boolean
 }
 
-export type KeyRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "requesterId" | "apartmentId" | "keyId" | "type" | "status" | "amountCents" | "overdueFeeCents" | "disputeToken" | "disputeWindowEndsAt" | "paidAt" | "pickedAt" | "dueAt" | "reminderSentAt" | "returnedAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["keyRequest"]>
+export type KeyRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "requesterId" | "apartmentId" | "keyId" | "type" | "status" | "amountCents" | "overdueFeeCents" | "requestReason" | "approvalToken" | "approvalCodeHash" | "approvalCodeAttempts" | "approvalExpiresAt" | "approvalRespondedAt" | "approvalDeniedAt" | "disputeToken" | "disputeWindowEndsAt" | "paidAt" | "pickedAt" | "dueAt" | "reminderSentAt" | "returnedAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["keyRequest"]>
 export type KeyRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   requester?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   apartment?: boolean | Prisma.ApartmentDefaultArgs<ExtArgs>
@@ -1408,6 +1725,13 @@ export type $KeyRequestPayload<ExtArgs extends runtime.Types.Extensions.Internal
     status: $Enums.RequestStatus
     amountCents: number
     overdueFeeCents: number
+    requestReason: string | null
+    approvalToken: string | null
+    approvalCodeHash: string | null
+    approvalCodeAttempts: number
+    approvalExpiresAt: Date | null
+    approvalRespondedAt: Date | null
+    approvalDeniedAt: Date | null
     disputeToken: string | null
     disputeWindowEndsAt: Date | null
     paidAt: Date | null
@@ -1852,6 +2176,13 @@ export interface KeyRequestFieldRefs {
   readonly status: Prisma.FieldRef<"KeyRequest", 'RequestStatus'>
   readonly amountCents: Prisma.FieldRef<"KeyRequest", 'Int'>
   readonly overdueFeeCents: Prisma.FieldRef<"KeyRequest", 'Int'>
+  readonly requestReason: Prisma.FieldRef<"KeyRequest", 'String'>
+  readonly approvalToken: Prisma.FieldRef<"KeyRequest", 'String'>
+  readonly approvalCodeHash: Prisma.FieldRef<"KeyRequest", 'String'>
+  readonly approvalCodeAttempts: Prisma.FieldRef<"KeyRequest", 'Int'>
+  readonly approvalExpiresAt: Prisma.FieldRef<"KeyRequest", 'DateTime'>
+  readonly approvalRespondedAt: Prisma.FieldRef<"KeyRequest", 'DateTime'>
+  readonly approvalDeniedAt: Prisma.FieldRef<"KeyRequest", 'DateTime'>
   readonly disputeToken: Prisma.FieldRef<"KeyRequest", 'String'>
   readonly disputeWindowEndsAt: Prisma.FieldRef<"KeyRequest", 'DateTime'>
   readonly paidAt: Prisma.FieldRef<"KeyRequest", 'DateTime'>

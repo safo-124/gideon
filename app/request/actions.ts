@@ -1,17 +1,15 @@
 "use server";
 
 import { randomBytes, randomInt } from "node:crypto";
+import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireTenant } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { findAvailableKey, getActiveRequest, getRequest } from "./_lib/data";
 import { getSettings } from "@/lib/settings";
-import {
-  sendDisputeEmail,
-  sendForOtherKeyReadyEmail,
-  sendKeyReadyEmail,
-} from "@/lib/email";
+import { sendForOtherKeyReadyEmail, sendKeyReadyEmail, sendResidentApprovalEmail } from "@/lib/email";
+import { sendSms } from "@/lib/sms";
 
 function parseId(formData: FormData): number {
   const v = Number(formData.get("id"));
@@ -21,6 +19,24 @@ function parseId(formData: FormData): number {
 
 function newCabinetCode() {
   return Array.from({ length: 4 }, () => randomInt(10)).join("");
+}
+
+function newApprovalCode() {
+  return Array.from({ length: 6 }, () => randomInt(10)).join("");
+}
+
+const APP_URL = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+
+const REQUEST_REASON_LABELS: Record<string, string> = {
+  caregiver: "Family or caregiver access",
+  locked_out: "Resident is locked out",
+  other: "Other approved reason",
+  resident_asked: "Resident asked me to help",
+};
+
+function requestReason(formData: FormData) {
+  const value = String(formData.get("reason") ?? "");
+  return REQUEST_REASON_LABELS[value] ? value : "other";
 }
 
 export async function createSelfRequest() {
@@ -59,22 +75,63 @@ export async function createForOtherRequest(formData: FormData) {
     redirect("/request/for-someone?error=Use+the+spare+key+request+for+your+own+apartment.");
   }
 
-  const apartment = await prisma.apartment.findUnique({ where: { id: apartmentId } });
+  const apartment = await prisma.apartment.findUnique({
+    where: { id: apartmentId },
+    include: {
+      block: true,
+      tenants: { select: { email: true, fullName: true, phone: true } },
+    },
+  });
   if (!apartment) redirect("/request/for-someone?error=Apartment+not+found.");
+  if (apartment.tenants.length === 0) {
+    redirect("/request/for-someone?error=No+resident+account+is+assigned+to+that+apartment.");
+  }
 
-  const { base_fee_cents } = await getSettings();
+  const { base_fee_cents, dispute_window_minutes } = await getSettings();
+  const reason = requestReason(formData);
+  const reasonLabel = REQUEST_REASON_LABELS[reason];
+  const approvalToken = randomBytes(24).toString("hex");
+  const approvalCode = newApprovalCode();
+  const approvalCodeHash = await bcrypt.hash(approvalCode, 10);
+  const approvalExpiresAt = new Date(Date.now() + dispute_window_minutes * 60 * 1000);
 
-  const request = await prisma.keyRequest.create({
+  await prisma.keyRequest.create({
     data: {
       requesterId: tenant.id,
       apartmentId,
       type: "FOR_OTHER",
-      status: "AWAITING_PAYMENT",
+      status: "PENDING_AUTH",
       amountCents: base_fee_cents,
+      requestReason: reason,
+      approvalToken,
+      approvalCodeHash,
+      approvalExpiresAt,
     },
   });
 
-  redirect(`/request/${request.id}/pay`);
+  const aptLabel = `${apartment.block.name} / Apt ${apartment.number}`;
+  const approvalUrl = `${APP_URL}/resident-approval/${approvalToken}`;
+
+  for (const resident of apartment.tenants) {
+    sendResidentApprovalEmail(resident.email, {
+      amountCents: base_fee_cents,
+      approvalUrl,
+      aptLabel,
+      code: approvalCode,
+      expiresAt: approvalExpiresAt,
+      reason: reasonLabel,
+      requesterName: tenant.fullName,
+      residentName: resident.fullName,
+    }).catch(console.error);
+
+    sendSms(
+      resident.phone,
+      `Key Recovery: ${tenant.fullName} requested a spare key for ${aptLabel}. Code: ${approvalCode}. Review: ${approvalUrl}`,
+    ).catch(console.error);
+  }
+
+  revalidatePath("/");
+  redirect("/");
 }
 
 export async function payRequest(formData: FormData) {
@@ -82,7 +139,7 @@ export async function payRequest(formData: FormData) {
   const requestId = parseId(formData);
 
   const request = await getRequest(requestId, tenant.id);
-  if (!request || request.status !== "AWAITING_PAYMENT") redirect("/");
+  if (!request || !["PENDING_AUTH", "AWAITING_PAYMENT"].includes(request.status)) redirect("/");
 
   const key = await findAvailableKey(request.apartmentId);
   if (!key) {
@@ -94,15 +151,6 @@ export async function payRequest(formData: FormData) {
   }
 
   const paidAt = new Date();
-  const { dispute_window_minutes } = await getSettings();
-
-  let disputeToken: string | undefined;
-  let disputeWindowEndsAt: Date | undefined;
-
-  if (request.type === "FOR_OTHER") {
-    disputeToken = randomBytes(24).toString("hex");
-    disputeWindowEndsAt = new Date(paidAt.getTime() + dispute_window_minutes * 60 * 1000);
-  }
 
   await prisma.keyRequest.update({
     where: { id: requestId },
@@ -110,7 +158,6 @@ export async function payRequest(formData: FormData) {
       status: "PAID",
       paidAt,
       keyId: key.id,
-      ...(disputeToken && { disputeToken, disputeWindowEndsAt }),
     },
   });
 
@@ -125,8 +172,7 @@ export async function payRequest(formData: FormData) {
       key.cabinet.number,
       key.cabinet.currentCode,
     ).catch(console.error);
-  } else if (disputeToken && disputeWindowEndsAt) {
-    // Email the requester their pickup info
+  } else {
     sendForOtherKeyReadyEmail(
       tenant.email,
       tenant.fullName,
@@ -134,22 +180,6 @@ export async function payRequest(formData: FormData) {
       key.cabinet.number,
       key.cabinet.currentCode,
     ).catch(console.error);
-
-    // Email every tenant in the target apartment the dispute notification
-    const residents = await prisma.tenant.findMany({
-      where: { apartmentId: request.apartmentId },
-      select: { email: true, fullName: true },
-    });
-    for (const resident of residents) {
-      sendDisputeEmail(
-        resident.email,
-        resident.fullName,
-        aptLabel,
-        tenant.fullName,
-        disputeToken,
-        disputeWindowEndsAt,
-      ).catch(console.error);
-    }
   }
 
   revalidatePath("/");

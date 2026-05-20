@@ -150,6 +150,50 @@ export async function sendForOtherKeyReadyEmail(
   );
 }
 
+// ── Email: Resident approval (FOR_OTHER target resident) ─────────────────────
+
+export async function sendResidentApprovalEmail(
+  to: string,
+  data: {
+    residentName: string;
+    requesterName: string;
+    aptLabel: string;
+    reason: string;
+    amountCents: number;
+    approvalUrl: string;
+    code: string;
+    expiresAt: Date;
+  },
+) {
+  const dtFmt = new Intl.DateTimeFormat("en-FI", {
+    hour: "2-digit",
+    minute: "2-digit",
+    month: "short",
+    day: "numeric",
+  });
+
+  await send(
+    to,
+    "Approve or deny a spare key request",
+    layout(`
+      ${h1("Spare key approval needed")}
+      ${p(`Hi ${data.residentName}, <strong>${data.requesterName}</strong> requested a spare key for <strong>${data.aptLabel}</strong>.`)}
+      ${infoBox([
+        ["Apartment", data.aptLabel],
+        ["Requested by", data.requesterName],
+        ["Reason", data.reason],
+        ["Fee", `€${(data.amountCents / 100).toFixed(2)}`],
+        ["Approval expires", dtFmt.format(data.expiresAt)],
+      ])}
+      ${p("Use this 6-digit code on the approval page:")}
+      <div style="margin:16px 0;padding:14px 18px;border-radius:6px;background:#f4f4f5;color:#09090b;font-size:28px;letter-spacing:6px;font-weight:700;text-align:center">${data.code}</div>
+      ${p("Approve only if you asked this person to help. Deny the request if you do not recognize it. The requester cannot pay or receive a cabinet code until you approve.")}
+      ${btn(data.approvalUrl, "Review request")}
+      ${p(`<span style="font-size:12px;color:#a1a1aa">This approval link and code expire at ${dtFmt.format(data.expiresAt)}.</span>`)}
+    `),
+  );
+}
+
 // ── Email: Dispute notification (apartment owner) ────────────────────────────
 
 export async function sendDisputeEmail(

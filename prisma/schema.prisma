@@ -121,6 +121,13 @@ model KeyRequest {
   status          RequestStatus @default(AWAITING_PAYMENT)
   amountCents     Int           @default(2000) // base €20
   overdueFeeCents Int           @default(0)
+  requestReason   String?
+  approvalToken   String?       @unique
+  approvalCodeHash String?
+  approvalCodeAttempts Int      @default(0)
+  approvalExpiresAt DateTime?
+  approvalRespondedAt DateTime?
+  approvalDeniedAt DateTime?
   // Authorization (FOR_OTHER)
   disputeToken    String?       @unique
   disputeWindowEndsAt DateTime?

@@ -7,6 +7,10 @@ import { SubmitButton } from "@/app/components/submit-button";
 
 export const metadata = { title: "Payment — Key Recovery" };
 
+function centsToEur(cents: number) {
+  return `€${(cents / 100).toFixed(2)}`;
+}
+
 export default async function PayPage({
   params,
 }: {
@@ -17,6 +21,7 @@ export default async function PayPage({
   const request = await getRequest(Number(id), tenant.id);
 
   if (!request || request.status !== "AWAITING_PAYMENT") redirect("/");
+  const amount = centsToEur(request.amountCents);
 
   return (
     <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8 sm:px-6 sm:py-12">
@@ -73,7 +78,7 @@ export default async function PayPage({
 
           <div className="flex items-center justify-between border-t border-zinc-100 px-5 py-4 dark:border-zinc-800">
             <span className="text-sm text-zinc-500">Total due</span>
-            <span className="text-xl font-bold">€20.00</span>
+            <span className="text-xl font-bold">{amount}</span>
           </div>
         </div>
 
@@ -83,7 +88,7 @@ export default async function PayPage({
             className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-teal-700 px-5 text-base font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50"
             pendingText="Processing payment…"
           >
-            Pay €20.00
+            Pay {amount}
           </SubmitButton>
         </form>
 
