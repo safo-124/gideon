@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { requireAdmin } from "@/lib/auth";
+import { KeyDoorAnimation } from "@/app/components/key-door-animation";
 import { getAdminCounts } from "../_lib/data";
 import { AdminNav } from "../_components/admin-nav";
 import { logoutAdmin } from "../login/actions";
@@ -12,8 +13,13 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[15rem_1fr]">
         <aside className="h-fit rounded-lg border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 lg:sticky lg:top-6">
           <div className="border-b border-zinc-200 px-2 pb-3 dark:border-zinc-800">
-            <div className="text-sm font-semibold">Key Recovery</div>
-            <div className="mt-1 text-xs text-zinc-500">{admin.username}</div>
+            <div className="flex items-center gap-3">
+              <KeyDoorAnimation size="sm" tone="zinc" />
+              <div>
+                <div className="text-sm font-semibold">Key Recovery</div>
+                <div className="mt-1 text-xs text-zinc-500">{admin.username}</div>
+              </div>
+            </div>
           </div>
           <div className="py-3">
             <AdminNav counts={counts} />

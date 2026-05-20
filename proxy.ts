@@ -26,7 +26,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Run on app pages but skip Next internals, static files, and the favicon.
-    "/((?!_next/|.*\\..*).*)",
+    // Run on app pages but skip API routes, Next internals, static files, and the favicon.
+    "/((?!api/|_next/|.*\\..*).*)",
   ],
 };

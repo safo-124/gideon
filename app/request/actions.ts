@@ -23,7 +23,7 @@ function newCabinetCode() {
   return Array.from({ length: 4 }, () => randomInt(10)).join("");
 }
 
-export async function createSelfRequest(_formData: FormData) {
+export async function createSelfRequest() {
   const tenant = await requireTenant();
   const existing = await getActiveRequest(tenant.id);
   if (existing) redirect("/");
@@ -50,6 +50,10 @@ export async function createForOtherRequest(formData: FormData) {
 
   const apartmentId = Number(formData.get("apartmentId"));
   if (!Number.isInteger(apartmentId) || apartmentId <= 0) redirect("/request/for-someone");
+
+  if (formData.get("permissionConfirmed") !== "yes") {
+    redirect("/request/for-someone?error=Confirm+you+have+permission+before+continuing.");
+  }
 
   if (apartmentId === tenant.apartmentId) {
     redirect("/request/for-someone?error=Use+the+spare+key+request+for+your+own+apartment.");

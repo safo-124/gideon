@@ -1,32 +1,17 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { createSession, destroySession } from "@/lib/session";
-
-export type LoginState = { error?: string };
+import { destroySession } from "@/lib/session";
+import { authenticateTenantLogin, type LoginState } from "./authenticate";
 
 export async function loginTenant(
   _prev: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const password = String(formData.get("password") ?? "");
-  if (!email || !password) return { error: "Email and password are required" };
+  const result = await authenticateTenantLogin(formData);
+  if (result.unlocked) redirect("/");
 
-  const tenant = await prisma.tenant.findUnique({ where: { email } });
-  if (!tenant) return { error: "Invalid email or password" };
-
-  if (!tenant.passwordHash) {
-    return { error: "Your account isn't activated yet. Check your email for the invite link." };
-  }
-
-  const ok = await bcrypt.compare(password, tenant.passwordHash);
-  if (!ok) return { error: "Invalid email or password" };
-
-  await createSession({ role: "tenant", id: tenant.id });
-  redirect("/");
+  return result;
 }
 
 export async function logout() {

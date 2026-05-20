@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
-:root {
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root,
+.light {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -12,11 +16,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  color-scheme: dark;
 }
 
 html {
@@ -38,4 +41,510 @@ input,
 select,
 textarea {
   font-size: max(16px, 1em);
+}
+
+@keyframes auth-topbar-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes auth-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes auth-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes auth-mark-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9) rotate(-4deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes auth-icon-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(-2deg);
+  }
+}
+
+@keyframes key-slide-in {
+  0%,
+  18% {
+    transform: translateX(-22px) rotate(0deg);
+  }
+  34%,
+  46% {
+    transform: translateX(0) rotate(0deg);
+  }
+  58%,
+  74% {
+    transform: translateX(0) rotate(24deg);
+  }
+  88%,
+  100% {
+    transform: translateX(-22px) rotate(0deg);
+  }
+}
+
+@keyframes door-swing {
+  0%,
+  48% {
+    transform: perspective(120px) rotateY(0deg);
+  }
+  64%,
+  82% {
+    transform: perspective(120px) rotateY(-48deg);
+  }
+  100% {
+    transform: perspective(120px) rotateY(0deg);
+  }
+}
+
+@keyframes door-light {
+  0%,
+  48%,
+  100% {
+    opacity: 0;
+    transform: scaleX(0.72);
+  }
+  64%,
+  82% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes lock-pulse {
+  0%,
+  42%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  54%,
+  72% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes key-slide-unlock {
+  0% {
+    transform: translateX(-28px) rotate(0deg);
+  }
+  34% {
+    transform: translateX(0) rotate(0deg);
+  }
+  52%,
+  100% {
+    transform: translateX(0) rotate(25deg);
+  }
+}
+
+@keyframes door-swing-unlock {
+  0%,
+  52% {
+    transform: perspective(120px) rotateY(0deg);
+  }
+  82%,
+  100% {
+    transform: perspective(120px) rotateY(-52deg);
+  }
+}
+
+@keyframes door-light-unlock {
+  0%,
+  55% {
+    opacity: 0;
+    transform: scaleX(0.72);
+  }
+  82%,
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes unlock-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes unlock-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes unlock-progress-fill {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes theme-pop {
+  0% {
+    transform: scale(0.82) rotate(-8deg);
+  }
+  70% {
+    transform: scale(1.08) rotate(3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes dashboard-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashboard-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashboard-status-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+.auth-shell {
+  transition:
+    background-color 260ms ease,
+    color 260ms ease;
+}
+
+.auth-topbar {
+  animation: auth-topbar-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.auth-card-wrap {
+  animation: auth-card-in 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.auth-card {
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 260ms ease;
+}
+
+.auth-card-header,
+.auth-form,
+.auth-footer {
+  animation: auth-fade-up 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.auth-card-header {
+  animation-delay: 70ms;
+}
+
+.auth-form {
+  animation-delay: 120ms;
+}
+
+.auth-footer {
+  animation-delay: 180ms;
+}
+
+.auth-mark {
+  animation: auth-mark-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.auth-card-mark svg {
+  animation: auth-icon-float 4.2s ease-in-out 900ms infinite;
+}
+
+.key-door-scene {
+  overflow: hidden;
+}
+
+.key-door-svg {
+  overflow: visible;
+}
+
+.key-door-panel {
+  transform-box: view-box;
+  transform-origin: 58px 46px;
+  animation: door-swing 3.8s cubic-bezier(0.65, 0, 0.35, 1) 680ms infinite;
+}
+
+.key-door-key {
+  transform-box: view-box;
+  transform-origin: 66px 46px;
+  animation: key-slide-in 3.8s cubic-bezier(0.65, 0, 0.35, 1) 680ms infinite;
+}
+
+.key-door-glow {
+  transform-box: view-box;
+  transform-origin: 58px 46px;
+  animation: door-light 3.8s ease-in-out 680ms infinite;
+}
+
+.key-door-lock {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lock-pulse 3.8s ease-in-out 680ms infinite;
+}
+
+.key-door-open-line {
+  opacity: 0.35;
+}
+
+.key-door-scene-once .key-door-panel {
+  animation: door-swing-unlock 1.55s cubic-bezier(0.65, 0, 0.35, 1) 120ms both;
+}
+
+.key-door-scene-once .key-door-key {
+  animation: key-slide-unlock 1.55s cubic-bezier(0.65, 0, 0.35, 1) 120ms both;
+}
+
+.key-door-scene-once .key-door-glow {
+  animation: door-light-unlock 1.55s ease-in-out 120ms both;
+}
+
+.key-door-scene-once .key-door-lock {
+  animation: lock-pulse 1.55s ease-in-out 120ms both;
+}
+
+.unlock-overlay {
+  animation: unlock-overlay-in 180ms ease both;
+}
+
+.unlock-overlay-panel {
+  animation: unlock-panel-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.unlock-progress {
+  animation: unlock-progress-fill 1.8s linear both;
+}
+
+.auth-field,
+.auth-error,
+.auth-submit {
+  animation: auth-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.auth-field:nth-child(1) {
+  animation-delay: 150ms;
+}
+
+.auth-field:nth-child(2) {
+  animation-delay: 210ms;
+}
+
+.auth-error {
+  animation-delay: 240ms;
+}
+
+.auth-submit {
+  animation-delay: 270ms;
+  transition:
+    transform 160ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.auth-input {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.theme-toggle {
+  animation: auth-topbar-in 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.theme-toggle-button {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 160ms ease,
+    box-shadow 180ms ease;
+}
+
+.theme-toggle-button-active svg {
+  animation: theme-pop 260ms ease both;
+}
+
+.tenant-dashboard-enter {
+  animation: dashboard-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tenant-dashboard-card {
+  animation: dashboard-card-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 220ms ease;
+}
+
+.dashboard-status-dot {
+  animation: dashboard-status-pulse 2.4s ease-in-out infinite;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .auth-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 60px -36px rgb(24 24 27 / 0.5);
+  }
+
+  .auth-card:hover .auth-card-mark {
+    transform: translateY(-1px);
+  }
+
+  .auth-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px -18px rgb(15 23 42 / 0.55);
+  }
+
+  .tenant-dashboard-card:hover {
+    box-shadow: 0 18px 42px -34px rgb(24 24 27 / 0.5);
+  }
+
+  .theme-toggle-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .dark .auth-submit:hover {
+    box-shadow: 0 12px 28px -18px rgb(255 255 255 / 0.32);
+  }
+}
+
+.auth-submit:active,
+.theme-toggle-button:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.tenant-dashboard-card:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 640px) {
+  .auth-card-wrap {
+    animation-duration: 460ms;
+  }
+
+  .auth-card-header,
+  .auth-form,
+  .auth-footer {
+    animation-duration: 420ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-topbar,
+  .auth-card-wrap,
+  .auth-card-header,
+  .auth-form,
+  .auth-footer,
+  .auth-mark,
+  .auth-card-mark svg,
+  .key-door-panel,
+  .key-door-key,
+  .key-door-glow,
+  .key-door-lock,
+  .unlock-overlay,
+  .unlock-overlay-panel,
+  .unlock-progress,
+  .auth-field,
+  .auth-error,
+  .auth-submit,
+  .tenant-dashboard-enter,
+  .tenant-dashboard-card,
+  .dashboard-status-dot,
+  .theme-toggle,
+  .theme-toggle-button-active svg {
+    animation: none !important;
+  }
+
+  .auth-shell,
+  .auth-card,
+  .auth-mark,
+  .auth-input,
+  .auth-submit,
+  .tenant-dashboard-card,
+  .theme-toggle,
+  .theme-toggle-button {
+    transition: none !important;
+  }
+
+  .auth-submit:active,
+  .tenant-dashboard-card:active,
+  .theme-toggle-button:active {
+    transform: none !important;
+  }
 }
